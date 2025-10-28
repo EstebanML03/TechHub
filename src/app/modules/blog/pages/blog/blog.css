@@ -1,0 +1,12 @@
+.post {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.post:last-child {
+  border-bottom: none;
+}
+
+.post h3 {
+  color: #007bff;
+}
