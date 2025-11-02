@@ -2,10 +2,6 @@
   <header class="blog-header">
     <h1>Blog</h1>
     <div class="search-container">
-      <div class="search-box">
-        <lucide-icon name="search"></lucide-icon>
-        <input type="text" placeholder="Buscar artículos..." class="search-input">
-      </div>
       <button class="btn-crear-post" (click)="toggleFormulario()">
         <lucide-icon name="plus"></lucide-icon>
         Crear Post
@@ -43,8 +39,17 @@
     </div>
   }
 
+  <!-- Filtros -->
+  <app-filters
+    [categories]="categorias"
+    [showSearch]="true"
+    [showCategoryFilter]="true"
+    [showSortOptions]="true"
+    (filterChange)="onFiltrosChange($event)"
+  ></app-filters>
+
   <div class="posts-grid">
-    @for (post of posts$ | async; track post.id) {
+    @for (post of postsPaginados; track post.id) {
       <article class="post-card" (click)="verPost(post)">
         <div class="post-image">
           <img [src]="post.imagen" [alt]="post.titulo">
@@ -78,6 +83,17 @@
       </article>
     }
   </div>
+
+  <!-- Paginación -->
+  @if (postsPaginados.length > 0) {
+    <app-pagination
+      [currentPage]="paginaActual"
+      [totalItems]="totalItems"
+      [itemsPerPage]="itemsPorPagina"
+      [maxVisiblePages]="5"
+      (pageChange)="onPaginaChange($event)"
+    ></app-pagination>
+  }
 
   @if (postSeleccionado) {
     <div class="modal-backdrop" (click)="cerrarPost()">

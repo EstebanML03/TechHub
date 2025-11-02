@@ -77,53 +77,24 @@
   }
 
   <!-- Filtros -->
-  <div class="filtros card">
-    <div class="filtros-header">
-      <h3>Filtrar Eventos</h3>
-      <lucide-icon name="filter"></lucide-icon>
-    </div>
-    <div class="filtros-container">
-      <div class="filtro-item">
-        <label>Buscar:</label>
-        <div class="input-with-icon">
-          <lucide-icon name="search"></lucide-icon>
-          <input
-            type="text"
-            [(ngModel)]="filtro.busqueda"
-            (ngModelChange)="aplicarFiltros()"
-            placeholder="Título, descripción o ubicación..."
-          />
-        </div>
-      </div>
-
-      <div class="filtro-item">
-        <label>Categoría:</label>
-        <select [(ngModel)]="filtro.categoria" (ngModelChange)="aplicarFiltros()">
-          <option [value]="undefined">Todas</option>
-          @for (categoria of categorias; track categoria) {
-            <option [value]="categoria">{{ categoria }}</option>
-          }
-        </select>
-      </div>
-
-      <button class="btn btn-secondary btn-limpiar" (click)="limpiarFiltros()">
-        <lucide-icon name="x"></lucide-icon>
-        Limpiar
-      </button>
-    </div>
-  </div>
+  <app-filters
+    [categories]="categorias"
+    [showSearch]="true"
+    [showCategoryFilter]="true"
+    [showSortOptions]="true"
+    (filterChange)="onFiltrosChange($event)"
+  ></app-filters>
 
   <!-- Lista de eventos -->
   <div class="eventos-lista">
-    @if (eventos$ | async; as eventos) {
-      @if (eventos.length === 0) {
-        <div class="no-eventos card">
-          <lucide-icon name="calendar"></lucide-icon>
-          <p>No se encontraron eventos con los filtros aplicados.</p>
-        </div>
-      } @else {
-        <div class="eventos-grid">
-          @for (evento of eventos; track evento.id) {
+    @if (eventosPaginados.length === 0) {
+      <div class="no-eventos card">
+        <lucide-icon name="calendar"></lucide-icon>
+        <p>No se encontraron eventos con los filtros aplicados.</p>
+      </div>
+    } @else {
+      <div class="eventos-grid">
+        @for (evento of eventosPaginados; track evento.id) {
             <div class="evento-card">
               @if (evento.imagen) {
                 <div class="evento-imagen">
@@ -208,7 +179,15 @@
             </div>
           }
         </div>
+
+        <!-- Paginación -->
+        <app-pagination
+          [currentPage]="paginaActual"
+          [totalItems]="totalItems"
+          [itemsPerPage]="itemsPorPagina"
+          [maxVisiblePages]="5"
+          (pageChange)="onPaginaChange($event)"
+        ></app-pagination>
       }
-    }
   </div>
 </div>

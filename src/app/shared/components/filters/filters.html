@@ -1,0 +1,83 @@
+<div class="filters-wrapper">
+  <!-- Botón móvil para mostrar filtros -->
+  <button class="btn-mobile-filters show-mobile" (click)="toggleMobileFilters()">
+    <lucide-icon name="filter"></lucide-icon>
+    <span>Filtros</span>
+    @if (hasActiveFilters()) {
+      <span class="active-indicator"></span>
+    }
+  </button>
+
+  <!-- Contenedor de filtros -->
+  <div class="filters-container" [class.show-mobile-filters]="showMobileFilters">
+    <!-- Búsqueda -->
+    @if (showSearch) {
+      <div class="filter-group filter-search">
+        <div class="search-input-wrapper">
+          <lucide-icon name="search" class="search-icon"></lucide-icon>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+          >
+          @if (searchTerm) {
+            <button class="clear-search" (click)="searchTerm = ''; onSearchChange()">
+              <lucide-icon name="x"></lucide-icon>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Filtro por categoría -->
+    @if (showCategoryFilter && categories.length > 0) {
+      <div class="filter-group">
+        <label class="filter-label">
+          <lucide-icon name="tag"></lucide-icon>
+          <span>Categoría</span>
+        </label>
+        <select
+          class="filter-select"
+          [(ngModel)]="selectedCategory"
+          (ngModelChange)="onCategoryChange()"
+        >
+          <option value="todas">Todas las categorías</option>
+          @for (category of categories; track category) {
+            <option [value]="category">{{category}}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <!-- Ordenar por -->
+    @if (showSortOptions) {
+      <div class="filter-group">
+        <label class="filter-label">
+          <lucide-icon name="arrow-up-down"></lucide-icon>
+          <span>Ordenar</span>
+        </label>
+        <select
+          class="filter-select"
+          [(ngModel)]="selectedSort"
+          (ngModelChange)="onSortChange()"
+        >
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value">{{option.label}}</option>
+          }
+        </select>
+      </div>
+    }
+
+    <!-- Limpiar filtros -->
+    @if (hasActiveFilters()) {
+      <div class="filter-group filter-actions">
+        <button class="btn-clear-filters" (click)="clearFilters()">
+          <lucide-icon name="x-circle"></lucide-icon>
+          <span>Limpiar filtros</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

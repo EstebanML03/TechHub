@@ -1,0 +1,253 @@
+.settings-wrapper {
+  min-height: 100vh;
+  background: var(--background);
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.settings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Header */
+.settings-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary);
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.page-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin: var(--spacing-xs) 0 0 0;
+}
+
+/* Options Grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.option-card {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.option-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.option-card.option-primary::before { background: var(--primary); }
+.option-card.option-success::before { background: var(--success); }
+.option-card.option-warning::before { background: var(--warning); }
+.option-card.option-info::before { background: var(--info); }
+
+.option-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+
+.option-card:hover::before {
+  width: 100%;
+  opacity: 0.05;
+}
+
+.option-icon-wrapper {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.option-card.option-primary .option-icon-wrapper {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+}
+
+.option-card.option-success .option-icon-wrapper {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+}
+
+.option-card.option-warning .option-icon-wrapper {
+  background: rgba(251, 146, 60, 0.1);
+  color: var(--warning);
+}
+
+.option-card.option-info .option-icon-wrapper {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--info);
+}
+
+.option-card:hover .option-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.option-icon-wrapper lucide-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.option-content {
+  flex: 1;
+}
+
+.option-titulo {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.option-descripcion {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.option-arrow {
+  width: 20px;
+  height: 20px;
+  color: var(--text-tertiary);
+  transition: transform 0.3s ease;
+}
+
+.option-card:hover .option-arrow {
+  transform: translateX(4px);
+  color: var(--text-primary);
+}
+
+/* Footer */
+.settings-footer {
+  margin-top: var(--spacing-2xl);
+}
+
+.info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  color: white;
+}
+
+.info-card lucide-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.info-card h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.info-card p {
+  font-size: var(--font-size-sm);
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-wrapper {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .header-content {
+    gap: var(--spacing-md);
+  }
+
+  .header-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .page-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .option-card {
+    padding: var(--spacing-lg);
+  }
+
+  .option-icon-wrapper {
+    width: 48px;
+    height: 48px;
+  }
+
+  .option-icon-wrapper lucide-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .option-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .option-arrow {
+    display: none;
+  }
+
+  .info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

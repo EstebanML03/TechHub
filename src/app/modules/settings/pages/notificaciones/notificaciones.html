@@ -1,0 +1,164 @@
+<div class="notificaciones-wrapper">
+  <div class="notificaciones-container">
+    <!-- Header -->
+    <div class="page-header">
+      <button class="btn-back" (click)="volver()">
+        <lucide-icon name="arrow-left"></lucide-icon>
+      </button>
+      <div class="header-content">
+        <lucide-icon name="bell" class="header-icon"></lucide-icon>
+        <div>
+          <h1 class="page-title">Preferencias de Notificaciones</h1>
+          <p class="page-subtitle">Personaliza cómo y cuándo recibir notificaciones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuración Global -->
+    <div class="section">
+      <h2 class="section-title">Configuración General</h2>
+
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="bell" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Activar notificaciones</h3>
+              <p class="config-descripcion">Recibir todas las notificaciones de TechHub</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="notificacionesGlobales">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="volume-2" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Sonidos</h3>
+              <p class="config-descripcion">Reproducir sonido al recibir notificaciones</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="sonidos" [disabled]="!notificacionesGlobales">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="moon" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Modo No Molestar</h3>
+              <p class="config-descripcion">Silenciar notificaciones en horario específico</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="noMolestar" [disabled]="!notificacionesGlobales">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        @if (noMolestar && notificacionesGlobales) {
+          <div class="horario-container">
+            <div class="horario-item">
+              <label class="horario-label">Desde</label>
+              <input type="time" class="time-input" [(ngModel)]="horarioNoMolestar.inicio">
+            </div>
+            <div class="horario-separator">
+              <lucide-icon name="arrow-right"></lucide-icon>
+            </div>
+            <div class="horario-item">
+              <label class="horario-label">Hasta</label>
+              <input type="time" class="time-input" [(ngModel)]="horarioNoMolestar.fin">
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Tipos de Notificaciones -->
+    <div class="section">
+      <h2 class="section-title">Canales de Notificación</h2>
+
+      @for (preferencia of preferencias; track preferencia.id) {
+        <div class="notif-type-card">
+          <div class="notif-type-header">
+            <div class="notif-type-info">
+              <div class="notif-type-icon-wrapper">
+                <lucide-icon [name]="getIconoTipo(preferencia.tipo)"></lucide-icon>
+              </div>
+              <div>
+                <h3 class="notif-type-titulo">{{preferencia.titulo}}</h3>
+                <p class="notif-type-descripcion">{{preferencia.descripcion}}</p>
+              </div>
+            </div>
+            <div class="notif-type-actions">
+              <button
+                class="btn-toggle-all"
+                [class.active]="algunaCategoriaActiva(preferencia)"
+                (click)="toggleTodo(preferencia, !todasCategoriasActivas(preferencia))"
+                [disabled]="!notificacionesGlobales"
+              >
+                @if (todasCategoriasActivas(preferencia)) {
+                  <lucide-icon name="check"></lucide-icon>
+                  <span>Todas</span>
+                } @else if (algunaCategoriaActiva(preferencia)) {
+                  <lucide-icon name="minus"></lucide-icon>
+                  <span>Algunas</span>
+                } @else {
+                  <lucide-icon name="x"></lucide-icon>
+                  <span>Ninguna</span>
+                }
+              </button>
+            </div>
+          </div>
+
+          <div class="categorias-grid">
+            @for (categoria of categorias; track categoria.key) {
+              <div
+                class="categoria-item"
+                [class.active]="getCategoriaActiva(preferencia, categoria.key)"
+                [class.disabled]="!notificacionesGlobales"
+                (click)="notificacionesGlobales && toggleCategoria(preferencia, categoria.key)"
+              >
+                <div class="categoria-icon">
+                  <lucide-icon [name]="categoria.icon"></lucide-icon>
+                </div>
+                <div class="categoria-content">
+                  <h4 class="categoria-label">{{categoria.label}}</h4>
+                  <p class="categoria-descripcion">{{categoria.descripcion}}</p>
+                </div>
+                <div class="categoria-check">
+                  @if (getCategoriaActiva(preferencia, categoria.key)) {
+                    <lucide-icon name="check-circle"></lucide-icon>
+                  } @else {
+                    <lucide-icon name="circle"></lucide-icon>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions-section">
+      <button class="btn btn-secondary" (click)="restablecerDefecto()" [disabled]="cargando">
+        <lucide-icon name="rotate-ccw"></lucide-icon>
+        <span>Restablecer</span>
+      </button>
+      <button class="btn btn-primary" (click)="guardarPreferencias()" [disabled]="cargando">
+        @if (cargando) {
+          <div class="spinner"></div>
+        } @else {
+          <lucide-icon name="save"></lucide-icon>
+        }
+        <span>Guardar Cambios</span>
+      </button>
+    </div>
+  </div>
+</div>

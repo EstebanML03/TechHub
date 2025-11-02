@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BlogService } from '../../services/blog.service';
 import { Post } from '../../models/post.model';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { FilterService, FilterOptions, FilterResult } from '../../../../shared/services/filter.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,9 +13,22 @@ import { Observable } from 'rxjs';
 })
 export class Blog implements OnInit {
   posts$: Observable<Post[]>;
+  postsOriginales: Post[] = [];
+  postsPaginados: Post[] = [];
+  categorias: string[] = [];
+
   postSeleccionado: Post | null = null;
   mostrarFormulario = false;
   nuevoComentario = '';
+
+  // Paginación
+  paginaActual = 1;
+  itemsPorPagina = 6;
+  totalItems = 0;
+
+  // Filtros
+  filtrosActivos: FilterOptions = {};
+
   nuevoPost = {
     titulo: '',
     resumen: '',
@@ -26,12 +40,49 @@ export class Blog implements OnInit {
 
   constructor(
     private blogService: BlogService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private filterService: FilterService
   ) {
     this.posts$ = this.blogService.getPosts();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.cargarPosts();
+  }
+
+  cargarPosts(): void {
+    this.blogService.getPosts().subscribe(posts => {
+      this.postsOriginales = posts;
+      this.categorias = this.filterService.getUniqueCategories(posts);
+      this.aplicarFiltrosYPaginacion();
+    });
+  }
+
+  onFiltrosChange(filtros: FilterOptions): void {
+    this.filtrosActivos = filtros;
+    this.paginaActual = 1;
+    this.aplicarFiltrosYPaginacion();
+  }
+
+  onPaginaChange(pagina: number): void {
+    this.paginaActual = pagina;
+    this.aplicarFiltrosYPaginacion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private aplicarFiltrosYPaginacion(): void {
+    const resultado: FilterResult<Post> = this.filterService.filterAndSort(
+      this.postsOriginales,
+      this.filtrosActivos,
+      {
+        page: this.paginaActual,
+        itemsPerPage: this.itemsPorPagina
+      }
+    );
+
+    this.postsPaginados = resultado.items;
+    this.totalItems = resultado.total;
+  }
 
   toggleFormulario(): void {
     this.mostrarFormulario = !this.mostrarFormulario;

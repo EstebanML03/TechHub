@@ -1,0 +1,86 @@
+<div class="pagination-wrapper">
+  @if (totalPages > 1) {
+    <div class="pagination-container">
+      <!-- Info de items -->
+      <div class="pagination-info">
+        <span class="info-text">
+          Mostrando <strong>{{getStartItem()}}</strong> a <strong>{{getEndItem()}}</strong> de <strong>{{totalItems}}</strong> resultados
+        </span>
+      </div>
+
+      <!-- Controles de paginación -->
+      <div class="pagination-controls">
+        <!-- Primera página -->
+        <button
+          class="page-btn page-btn-nav"
+          [disabled]="isFirstPage()"
+          (click)="goToFirst()"
+          title="Primera página"
+        >
+          <lucide-icon name="chevrons-left"></lucide-icon>
+        </button>
+
+        <!-- Página anterior -->
+        <button
+          class="page-btn page-btn-nav"
+          [disabled]="isFirstPage()"
+          (click)="goToPrevious()"
+          title="Página anterior"
+        >
+          <lucide-icon name="chevron-left"></lucide-icon>
+        </button>
+
+        <!-- Primera página (si no está en visibles) -->
+        @if (shouldShowFirstPage()) {
+          <button class="page-btn" (click)="goToPage(1)">
+            1
+          </button>
+          @if (visiblePages[0] > 2) {
+            <span class="pagination-ellipsis">...</span>
+          }
+        }
+
+        <!-- Páginas visibles -->
+        @for (page of visiblePages; track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)"
+          >
+            {{page}}
+          </button>
+        }
+
+        <!-- Última página (si no está en visibles) -->
+        @if (shouldShowLastPage()) {
+          @if (visiblePages[visiblePages.length - 1] < totalPages - 1) {
+            <span class="pagination-ellipsis">...</span>
+          }
+          <button class="page-btn" (click)="goToPage(totalPages)">
+            {{totalPages}}
+          </button>
+        }
+
+        <!-- Página siguiente -->
+        <button
+          class="page-btn page-btn-nav"
+          [disabled]="isLastPage()"
+          (click)="goToNext()"
+          title="Página siguiente"
+        >
+          <lucide-icon name="chevron-right"></lucide-icon>
+        </button>
+
+        <!-- Última página -->
+        <button
+          class="page-btn page-btn-nav"
+          [disabled]="isLastPage()"
+          (click)="goToLast()"
+          title="Última página"
+        >
+          <lucide-icon name="chevrons-right"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  }
+</div>

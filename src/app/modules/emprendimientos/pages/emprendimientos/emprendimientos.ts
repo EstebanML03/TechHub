@@ -7,6 +7,7 @@ import {
   FiltroEmprendimientos
 } from '../../models/emprendimiento.model';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { FilterService, FilterOptions, FilterResult } from '../../../../shared/services/filter.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -17,9 +18,18 @@ import { Observable } from 'rxjs';
 })
 export class Emprendimientos implements OnInit {
   emprendimientos$: Observable<Emprendimiento[]>;
+  emprendimientosOriginales: Emprendimiento[] = [];
+  emprendimientosPaginados: Emprendimiento[] = [];
   categorias = Object.values(CategoriaEmprendimiento);
   etapas = Object.values(EtapaEmprendimiento);
 
+  // Paginación
+  paginaActual = 1;
+  itemsPorPagina = 6;
+  totalItems = 0;
+
+  // Filtros
+  filtrosActivos: FilterOptions = {};
   filtro: FiltroEmprendimientos = {};
   mostrarFormulario = false;
   emprendimientoSeleccionado: Emprendimiento | null = null;
@@ -47,13 +57,47 @@ export class Emprendimientos implements OnInit {
 
   constructor(
     private emprendimientosService: EmprendimientosService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private filterService: FilterService
   ) {
     this.emprendimientos$ = this.emprendimientosService.getEmprendimientos();
   }
 
   ngOnInit(): void {
-    this.aplicarFiltros();
+    this.cargarEmprendimientos();
+  }
+
+  cargarEmprendimientos(): void {
+    this.emprendimientosService.getEmprendimientos().subscribe(emprendimientos => {
+      this.emprendimientosOriginales = emprendimientos;
+      this.aplicarFiltrosYPaginacion();
+    });
+  }
+
+  onFiltrosChange(filtros: FilterOptions): void {
+    this.filtrosActivos = filtros;
+    this.paginaActual = 1;
+    this.aplicarFiltrosYPaginacion();
+  }
+
+  onPaginaChange(pagina: number): void {
+    this.paginaActual = pagina;
+    this.aplicarFiltrosYPaginacion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private aplicarFiltrosYPaginacion(): void {
+    const resultado: FilterResult<Emprendimiento> = this.filterService.filterAndSort(
+      this.emprendimientosOriginales,
+      this.filtrosActivos,
+      {
+        page: this.paginaActual,
+        itemsPerPage: this.itemsPorPagina
+      }
+    );
+
+    this.emprendimientosPaginados = resultado.items;
+    this.totalItems = resultado.total;
   }
 
   aplicarFiltros(): void {

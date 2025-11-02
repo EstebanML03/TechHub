@@ -360,12 +360,20 @@
     </div>
   </section>
 
+  <!-- Filtros -->
+  <app-filters
+    [categories]="categorias"
+    [showSearch]="true"
+    [showCategoryFilter]="true"
+    [showSortOptions]="true"
+    (filterChange)="onFiltrosChange($event)"
+  ></app-filters>
+
   <!-- Emprendimientos Grid -->
-  @if (emprendimientos$ | async; as emprendimientos) {
-    <section class="emprendimientos-grid">
-      @if (emprendimientos.length > 0) {
-        @for (emprendimiento of emprendimientos; track emprendimiento.id) {
-          <article class="emprendimiento-card">
+  @if (emprendimientosPaginados.length > 0) {
+    <div class="emprendimientos-grid">
+      @for (emprendimiento of emprendimientosPaginados; track emprendimiento.id) {
+        <article class="emprendimiento-card">
             <div class="card-image">
               @if (emprendimiento.imagen) {
                 <img [src]="emprendimiento.imagen" [alt]="emprendimiento.nombre" />
@@ -451,14 +459,22 @@
                 </button>
               </div>
             </div>
-          </article>
-        }
-      } @else {
-        <div class="empty-state">
-          <p>No se encontraron emprendimientos con los filtros aplicados.</p>
-        </div>
+        </article>
       }
-    </section>
+    </div>
+
+    <!-- Paginación -->
+    <app-pagination
+      [currentPage]="paginaActual"
+      [totalItems]="totalItems"
+      [itemsPerPage]="itemsPorPagina"
+      [maxVisiblePages]="5"
+      (pageChange)="onPaginaChange($event)"
+    ></app-pagination>
+  } @else {
+    <div class="empty-state">
+      <p>No se encontraron emprendimientos con los filtros aplicados.</p>
+    </div>
   }
 
   <!-- Detail Modal -->

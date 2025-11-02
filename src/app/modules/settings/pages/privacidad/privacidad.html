@@ -1,0 +1,247 @@
+<div class="privacidad-wrapper">
+  <div class="privacidad-container">
+    <!-- Header -->
+    <div class="page-header">
+      <button class="btn-back" (click)="volver()">
+        <lucide-icon name="arrow-left"></lucide-icon>
+      </button>
+      <div class="header-content">
+        <lucide-icon name="shield" class="header-icon"></lucide-icon>
+        <div>
+          <h1 class="page-title">Privacidad y Seguridad</h1>
+          <p class="page-subtitle">Controla quién puede ver tu información y cómo se usa</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visibilidad del Perfil -->
+    <div class="section">
+      <h2 class="section-title">
+        <lucide-icon name="eye"></lucide-icon>
+        <span>Visibilidad del Perfil</span>
+      </h2>
+
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="globe" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Perfil público</h3>
+              <p class="config-descripcion">Tu perfil será visible para todos los usuarios de TechHub</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.perfilPublico">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="mail" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Mostrar email</h3>
+              <p class="config-descripcion">Otros usuarios podrán ver tu correo electrónico</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.mostrarEmail">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="phone" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Mostrar teléfono</h3>
+              <p class="config-descripcion">Tu número de teléfono será visible en tu perfil</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.mostrarTelefono">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="map-pin" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Mostrar ubicación</h3>
+              <p class="config-descripcion">Tu ciudad o país será visible para otros usuarios</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.mostrarUbicacion">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interacciones -->
+    <div class="section">
+      <h2 class="section-title">
+        <lucide-icon name="message-circle"></lucide-icon>
+        <span>Interacciones</span>
+      </h2>
+
+      <div class="config-card">
+        <div class="config-item-full">
+          <div class="config-info">
+            <lucide-icon name="message-square" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">¿Quién puede enviarte mensajes?</h3>
+              <p class="config-descripcion">Controla quién puede contactarte directamente</p>
+            </div>
+          </div>
+
+          <div class="radio-group">
+            @for (opcion of opcionesMensajes; track opcion.valor) {
+              <label class="radio-option" [class.active]="config.permitirMensajes === opcion.valor">
+                <input
+                  type="radio"
+                  name="permitirMensajes"
+                  [value]="opcion.valor"
+                  [(ngModel)]="config.permitirMensajes"
+                >
+                <div class="radio-content">
+                  <lucide-icon [name]="opcion.icon"></lucide-icon>
+                  <span>{{opcion.label}}</span>
+                </div>
+                <div class="radio-check">
+                  <lucide-icon name="check-circle"></lucide-icon>
+                </div>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="activity" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Mostrar actividad reciente</h3>
+              <p class="config-descripcion">Tu actividad será visible en tu perfil</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.mostrarActividad">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="folder" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Mostrar proyectos</h3>
+              <p class="config-descripcion">Tus proyectos y emprendimientos serán públicos</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.mostrarProyectos">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos y Privacidad -->
+    <div class="section">
+      <h2 class="section-title">
+        <lucide-icon name="database"></lucide-icon>
+        <span>Datos y Privacidad</span>
+      </h2>
+
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="search" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Indexar perfil en buscadores</h3>
+              <p class="config-descripcion">Tu perfil aparecerá en resultados de búsqueda de Google y otros</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.indexarPerfil">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <div class="config-info">
+            <lucide-icon name="bar-chart" class="config-icon"></lucide-icon>
+            <div>
+              <h3 class="config-titulo">Compartir estadísticas anónimas</h3>
+              <p class="config-descripcion">Ayúdanos a mejorar compartiendo datos de uso anónimos</p>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="config.compartirEstadisticas">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones de Cuenta -->
+    <div class="section">
+      <h2 class="section-title">
+        <lucide-icon name="alert-triangle"></lucide-icon>
+        <span>Gestión de Cuenta</span>
+      </h2>
+
+      <div class="actions-card">
+        <div class="action-item">
+          <div class="action-info">
+            <div class="action-icon action-icon-info">
+              <lucide-icon name="download"></lucide-icon>
+            </div>
+            <div>
+              <h3 class="action-titulo">Descargar mis datos</h3>
+              <p class="action-descripcion">Obtén una copia de toda tu información en TechHub</p>
+            </div>
+          </div>
+          <button class="btn btn-secondary" (click)="descargarDatos()" [disabled]="cargando">
+            <lucide-icon name="download"></lucide-icon>
+            <span>Descargar</span>
+          </button>
+        </div>
+
+        <div class="action-item action-item-danger">
+          <div class="action-info">
+            <div class="action-icon action-icon-danger">
+              <lucide-icon name="trash-2"></lucide-icon>
+            </div>
+            <div>
+              <h3 class="action-titulo">Eliminar cuenta</h3>
+              <p class="action-descripcion">Elimina permanentemente tu cuenta y todos tus datos</p>
+            </div>
+          </div>
+          <button class="btn btn-danger" (click)="eliminarCuenta()" [disabled]="cargando">
+            <lucide-icon name="trash-2"></lucide-icon>
+            <span>Eliminar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guardar Cambios -->
+    <div class="save-section">
+      <button class="btn btn-secondary" (click)="restablecerDefecto()" [disabled]="cargando">
+        <lucide-icon name="rotate-ccw"></lucide-icon>
+        <span>Restablecer</span>
+      </button>
+      <button class="btn btn-primary" (click)="guardarConfiguracion()" [disabled]="cargando">
+        @if (cargando) {
+          <div class="spinner"></div>
+        } @else {
+          <lucide-icon name="save"></lucide-icon>
+        }
+        <span>Guardar Cambios</span>
+      </button>
+    </div>
+  </div>
+</div>

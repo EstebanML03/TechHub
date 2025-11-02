@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { EventosService } from '../../services/eventos.service';
 import { Evento, CategoriaEvento, FiltroEventos } from '../../models/evento.model';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { FilterService, FilterOptions, FilterResult } from '../../../../shared/services/filter.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-eventos',
@@ -12,9 +14,19 @@ import { Observable } from 'rxjs';
 })
 export class Eventos implements OnInit {
   eventos$: Observable<Evento[]>;
+  eventosOriginales: Evento[] = [];
+  eventosFiltrados: Evento[] = [];
+  eventosPaginados: Evento[] = [];
   categorias = Object.values(CategoriaEvento);
 
+  // Paginación
+  paginaActual = 1;
+  itemsPorPagina = 6;
+  totalItems = 0;
+
+  // Filtros
   filtro: FiltroEventos = {};
+  filtrosActivos: FilterOptions = {};
   mostrarFormulario = false;
 
   nuevoEvento = {
@@ -31,13 +43,48 @@ export class Eventos implements OnInit {
 
   constructor(
     private eventosService: EventosService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private filterService: FilterService
   ) {
     this.eventos$ = this.eventosService.getEventos();
   }
 
   ngOnInit(): void {
-    this.aplicarFiltros();
+    this.cargarEventos();
+  }
+
+  cargarEventos(): void {
+    this.eventosService.getEventos().subscribe(eventos => {
+      this.eventosOriginales = eventos;
+      this.aplicarFiltrosYPaginacion();
+    });
+  }
+
+  onFiltrosChange(filtros: FilterOptions): void {
+    this.filtrosActivos = filtros;
+    this.paginaActual = 1; // Reset a primera página cuando cambian filtros
+    this.aplicarFiltrosYPaginacion();
+  }
+
+  onPaginaChange(pagina: number): void {
+    this.paginaActual = pagina;
+    this.aplicarFiltrosYPaginacion();
+    // Scroll al inicio de la lista
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private aplicarFiltrosYPaginacion(): void {
+    const resultado: FilterResult<Evento> = this.filterService.filterAndSort(
+      this.eventosOriginales,
+      this.filtrosActivos,
+      {
+        page: this.paginaActual,
+        itemsPerPage: this.itemsPorPagina
+      }
+    );
+
+    this.eventosPaginados = resultado.items;
+    this.totalItems = resultado.total;
   }
 
   aplicarFiltros(): void {

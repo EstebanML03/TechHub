@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -20,7 +21,8 @@ export class AuthComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -60,12 +62,16 @@ export class AuthComponent {
 
     this.cargando = true;
 
-    // Simular llamada a API
-    setTimeout(() => {
-      this.cargando = false;
+    try {
+      const { email, password } = this.loginForm.value;
+      await this.authService.login(email, password);
       this.alertService.success('¡Bienvenido!', 'Inicio de sesión exitoso');
       this.router.navigate(['/home']);
-    }, 1500);
+    } catch (error) {
+      this.alertService.error('Error', 'Credenciales incorrectas');
+    } finally {
+      this.cargando = false;
+    }
   }
 
   async registrar() {
@@ -85,12 +91,23 @@ export class AuthComponent {
 
     this.cargando = true;
 
-    // Simular llamada a API
-    setTimeout(() => {
-      this.cargando = false;
+    try {
+      const { nombre, email } = this.registerForm.value;
+      await this.authService.register({
+        nombre,
+        apellido: '', // Puedes agregar un campo para el apellido si es necesario
+        email,
+        password,
+        cedula: '', // Puedes agregar un campo para la cédula si es necesario
+        id_rol: 2 // Rol predeterminado para nuevos usuarios
+      });
       this.alertService.success('¡Cuenta creada!', 'Registro exitoso. Bienvenido a TechHub');
       this.router.navigate(['/home']);
-    }, 1500);
+    } catch (error) {
+      this.alertService.error('Error', 'No se pudo completar el registro');
+    } finally {
+      this.cargando = false;
+    }
   }
 
   private marcarCamposComoTocados(form: FormGroup) {

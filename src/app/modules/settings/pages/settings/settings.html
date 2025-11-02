@@ -1,0 +1,41 @@
+<div class="settings-wrapper">
+  <div class="settings-container">
+    <!-- Header -->
+    <div class="settings-header">
+      <div class="header-content">
+        <lucide-icon name="settings" class="header-icon"></lucide-icon>
+        <div>
+          <h1 class="page-title">Configuración</h1>
+          <p class="page-subtitle">Personaliza tu experiencia en TechHub</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opciones Grid -->
+    <div class="options-grid">
+      @for (opcion of opciones; track opcion.ruta) {
+        <div class="option-card option-{{opcion.color}}" (click)="navegarA(opcion.ruta)">
+          <div class="option-icon-wrapper">
+            <lucide-icon [name]="opcion.icon"></lucide-icon>
+          </div>
+          <div class="option-content">
+            <h3 class="option-titulo">{{opcion.titulo}}</h3>
+            <p class="option-descripcion">{{opcion.descripcion}}</p>
+          </div>
+          <lucide-icon name="chevron-right" class="option-arrow"></lucide-icon>
+        </div>
+      }
+    </div>
+
+    <!-- Información adicional -->
+    <div class="settings-footer">
+      <div class="info-card">
+        <lucide-icon name="info"></lucide-icon>
+        <div>
+          <h4>¿Necesitas ayuda?</h4>
+          <p>Visita nuestro centro de ayuda o contacta con soporte</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

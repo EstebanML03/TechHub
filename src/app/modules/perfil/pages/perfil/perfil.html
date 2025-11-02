@@ -1,160 +1,201 @@
-<div class="perfil-container">
-  <header class="perfil-header">
-    <div class="header-content">
-      <div class="avatar-section">
-        <span class="avatar-large">{{ perfil.avatar }}</span>
+<div class="perfil-wrapper">
+  <!-- Cover Image -->
+  <div class="perfil-cover"></div>
+
+  <div class="perfil-container">
+    <!-- Header Card -->
+    <div class="profile-header">
+      <!-- Avatar -->
+      <div class="avatar-wrapper">
+        @if (!editando) {
+          @if (perfil.avatar) {
+            <img [src]="perfil.avatar" class="avatar" alt="Avatar">
+          } @else {
+            <div class="avatar-placeholder">{{ iniciales }}</div>
+          }
+        } @else {
+          <div class="avatar-edit">
+            @if (avatarPreview || perfilEditado.avatar) {
+              <img [src]="avatarPreview || perfilEditado.avatar" class="avatar" alt="Avatar">
+              <button class="btn-remove-avatar" (click)="eliminarAvatar()"><lucide-icon name="x"></lucide-icon></button>
+            } @else {
+              <div class="avatar-placeholder">{{ iniciales }}</div>
+            }
+            <label class="btn-change-avatar" for="avatar-input">
+              <lucide-icon name="camera"></lucide-icon>
+            </label>
+            <input type="file" id="avatar-input" accept="image/*" (change)="onAvatarChange($event)" hidden>
+          </div>
+        }
       </div>
+
+      <!-- Info -->
       <div class="header-info">
         @if (!editando) {
           <h1>{{ perfil.nombre }}</h1>
           <p class="rol">{{ perfil.rol }}</p>
+          <div class="meta">
+            <span><lucide-icon name="map-pin"></lucide-icon>{{ perfil.ubicacion }}</span>
+            <span><lucide-icon name="briefcase"></lucide-icon>{{ perfil.empresa }}</span>
+          </div>
         } @else {
-          <input type="text" [(ngModel)]="perfilEditado.nombre" class="edit-input" placeholder="Nombre">
-          <input type="text" [(ngModel)]="perfilEditado.rol" class="edit-input" placeholder="Rol">
+          <input [(ngModel)]="perfilEditado.nombre" class="input-lg" placeholder="Nombre">
+          <input [(ngModel)]="perfilEditado.rol" class="input-md" placeholder="Rol">
+          <div class="input-row">
+            <input [(ngModel)]="perfilEditado.ubicacion" placeholder="Ubicación">
+            <input [(ngModel)]="perfilEditado.empresa" placeholder="Empresa">
+          </div>
         }
       </div>
+
+      <!-- Actions -->
       <div class="header-actions">
         @if (!editando) {
-          <button class="btn-editar" (click)="activarEdicion()">Editar Perfil</button>
+          <button class="btn-primary" (click)="activarEdicion()">
+            <lucide-icon name="edit-2"></lucide-icon>Editar
+          </button>
         } @else {
-          <button class="btn-guardar" (click)="guardarCambios()">Guardar</button>
-          <button class="btn-cancelar" (click)="cancelarEdicion()">Cancelar</button>
+          <button class="btn-success" (click)="guardarCambios()">
+            <lucide-icon name="check"></lucide-icon>Guardar
+          </button>
+          <button class="btn-secondary" (click)="cancelarEdicion()">
+            <lucide-icon name="x"></lucide-icon>Cancelar
+          </button>
         }
       </div>
     </div>
-  </header>
 
-  <div class="perfil-body">
-    <section class="perfil-section">
-      <h2 class="section-title">Sobre mí</h2>
-      <div class="section-content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      @for (stat of estadisticas; track stat.label) {
+        <div class="stat-card stat-{{stat.color}}">
+          <lucide-icon [name]="stat.icon"></lucide-icon>
+          <div>
+            <p class="stat-value">{{stat.valor}}</p>
+            <p class="stat-label">{{stat.label}}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+      <main class="main-col">
+        <!-- Bio -->
+        <section class="card">
+          <h2><lucide-icon name="user"></lucide-icon>Sobre mí</h2>
+          @if (!editando) {
+            <p>{{ perfil.bio }}</p>
+          } @else {
+            <textarea [(ngModel)]="perfilEditado.bio" rows="4" placeholder="Biografía..."></textarea>
+          }
+        </section>
+
+        <!-- Skills -->
+        <section class="card">
+          <h2><lucide-icon name="code"></lucide-icon>Habilidades</h2>
+          <div class="tags">
+            @if (!editando) {
+              @for (skill of perfil.skills; track skill) {
+                <span class="tag tag-skill">{{skill}}</span>
+              }
+            } @else {
+              @for (skill of perfilEditado.skills; track skill; let i = $index) {
+                <span class="tag tag-skill tag-edit">{{skill}}<button (click)="eliminarSkill(i)">×</button></span>
+              }
+              <input (keydown)="agregarSkill($event)" placeholder="+ Agregar (Enter)">
+            }
+          </div>
+        </section>
+
+        <!-- Intereses -->
+        <section class="card">
+          <h2><lucide-icon name="heart"></lucide-icon>Intereses</h2>
+          <div class="tags">
+            @if (!editando) {
+              @for (int of perfil.intereses; track int) {
+                <span class="tag tag-interest">{{int}}</span>
+              }
+            } @else {
+              @for (int of perfilEditado.intereses; track int; let i = $index) {
+                <span class="tag tag-interest tag-edit">{{int}}<button (click)="eliminarInteres(i)">×</button></span>
+              }
+              <input (keydown)="agregarInteres($event)" placeholder="+ Agregar (Enter)">
+            }
+          </div>
+        </section>
+      </main>
+
+      <aside class="side-col">
+        <!-- Contacto -->
+        <section class="card">
+          <h2><lucide-icon name="mail"></lucide-icon>Contacto</h2>
+          <div class="contact-list">
+            <div class="contact-item">
+              <lucide-icon name="mail"></lucide-icon>
+              <div>
+                <label>Email</label>
+                @if (!editando) {
+                  <a [href]="'mailto:'+perfil.email">{{perfil.email}}</a>
+                } @else {
+                  <input [(ngModel)]="perfilEditado.email" type="email">
+                }
+              </div>
+            </div>
+            <div class="contact-item">
+              <lucide-icon name="globe"></lucide-icon>
+              <div>
+                <label>Website</label>
+                @if (!editando) {
+                  <a [href]="perfil.website" target="_blank">{{perfil.website}}</a>
+                } @else {
+                  <input [(ngModel)]="perfilEditado.website">
+                }
+              </div>
+            </div>
+            <div class="contact-item">
+              <lucide-icon name="github"></lucide-icon>
+              <div>
+                <label>GitHub</label>
+                @if (!editando) {
+                  <span>{{perfil.github}}</span>
+                } @else {
+                  <input [(ngModel)]="perfilEditado.github">
+                }
+              </div>
+            </div>
+            <div class="contact-item">
+              <lucide-icon name="linkedin"></lucide-icon>
+              <div>
+                <label>LinkedIn</label>
+                @if (!editando) {
+                  <span>{{perfil.linkedin}}</span>
+                } @else {
+                  <input [(ngModel)]="perfilEditado.linkedin">
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Actividad -->
         @if (!editando) {
-          <p class="bio">{{ perfil.bio }}</p>
-        } @else {
-          <textarea [(ngModel)]="perfilEditado.bio" class="edit-textarea" placeholder="Biografía" rows="4"></textarea>
+          <section class="card">
+            <h2><lucide-icon name="activity"></lucide-icon>Actividad</h2>
+            <div class="activity-list">
+              @for (act of actividadesRecientes; track act.titulo) {
+                <div class="activity-item">
+                  <lucide-icon [name]="getActividadIcon(act.tipo)"></lucide-icon>
+                  <div>
+                    <p>{{act.titulo}}</p>
+                    <span>{{formatearFecha(act.fecha)}}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
         }
-      </div>
-    </section>
-
-    <section class="perfil-section">
-      <h2 class="section-title">Información de Contacto</h2>
-      <div class="section-content">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-icon">📧</span>
-            <div class="info-content">
-              <span class="info-label">Email</span>
-              @if (!editando) {
-                <span class="info-value">{{ perfil.email }}</span>
-              } @else {
-                <input type="email" [(ngModel)]="perfilEditado.email" class="edit-input-small" placeholder="Email">
-              }
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">📍</span>
-            <div class="info-content">
-              <span class="info-label">Ubicación</span>
-              @if (!editando) {
-                <span class="info-value">{{ perfil.ubicacion }}</span>
-              } @else {
-                <input type="text" [(ngModel)]="perfilEditado.ubicacion" class="edit-input-small" placeholder="Ubicación">
-              }
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">🏢</span>
-            <div class="info-content">
-              <span class="info-label">Empresa</span>
-              @if (!editando) {
-                <span class="info-value">{{ perfil.empresa }}</span>
-              } @else {
-                <input type="text" [(ngModel)]="perfilEditado.empresa" class="edit-input-small" placeholder="Empresa">
-              }
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">🌐</span>
-            <div class="info-content">
-              <span class="info-label">Website</span>
-              @if (!editando) {
-                <a [href]="perfil.website" target="_blank" class="info-link">{{ perfil.website }}</a>
-              } @else {
-                <input type="url" [(ngModel)]="perfilEditado.website" class="edit-input-small" placeholder="Website">
-              }
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">💻</span>
-            <div class="info-content">
-              <span class="info-label">GitHub</span>
-              @if (!editando) {
-                <span class="info-value">{{ perfil.github }}</span>
-              } @else {
-                <input type="text" [(ngModel)]="perfilEditado.github" class="edit-input-small" placeholder="GitHub">
-              }
-            </div>
-          </div>
-
-          <div class="info-item">
-            <span class="info-icon">💼</span>
-            <div class="info-content">
-              <span class="info-label">LinkedIn</span>
-              @if (!editando) {
-                <span class="info-value">{{ perfil.linkedin }}</span>
-              } @else {
-                <input type="text" [(ngModel)]="perfilEditado.linkedin" class="edit-input-small" placeholder="LinkedIn">
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="perfil-section">
-      <h2 class="section-title">Skills</h2>
-      <div class="section-content">
-        <div class="tags-container">
-          @if (!editando) {
-            @for (skill of perfil.skills; track skill) {
-              <span class="tag skill-tag">{{ skill }}</span>
-            }
-          } @else {
-            @for (skill of perfilEditado.skills; track skill; let i = $index) {
-              <span class="tag skill-tag editable">
-                {{ skill }}
-                <button class="tag-remove" (click)="eliminarSkill(i)">×</button>
-              </span>
-            }
-            <input type="text" (keydown)="agregarSkill($event)" class="tag-input" placeholder="Agregar skill (Enter)">
-          }
-        </div>
-      </div>
-    </section>
-
-    <section class="perfil-section">
-      <h2 class="section-title">Intereses</h2>
-      <div class="section-content">
-        <div class="tags-container">
-          @if (!editando) {
-            @for (interes of perfil.intereses; track interes) {
-              <span class="tag interes-tag">{{ interes }}</span>
-            }
-          } @else {
-            @for (interes of perfilEditado.intereses; track interes; let i = $index) {
-              <span class="tag interes-tag editable">
-                {{ interes }}
-                <button class="tag-remove" (click)="eliminarInteres(i)">×</button>
-              </span>
-            }
-            <input type="text" (keydown)="agregarInteres($event)" class="tag-input" placeholder="Agregar interés (Enter)">
-          }
-        </div>
-      </div>
-    </section>
+      </aside>
+    </div>
   </div>
 </div>
