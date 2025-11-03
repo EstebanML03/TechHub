@@ -21,13 +21,19 @@
     @for (opcion of opciones; track opcion.ruta) {
       <div 
         class="option-card option-{{opcion.color}}"
+        [class.option-external]="opcion.ruta.startsWith('http')"
         (click)="navegarA(opcion)">
         
         <!-- Badge de estado -->
-        @if (opcion.titulo === 'Mi Perfil' || opcion.titulo === 'Cambiar Contraseña') {
+        @if (opcion.titulo === 'Mi Perfil' || opcion.titulo === 'Cambiar Contraseña' || opcion.titulo === 'Términos y Condiciones') {
           <div class="badge-disponible">
             <lucide-icon name="check-circle"></lucide-icon>
             <span>Funcional</span>
+          </div>
+        } @else if (opcion.ruta.startsWith('http')) {
+          <div class="badge-externo">
+            <lucide-icon name="external-link"></lucide-icon>
+            <span>Enlace externo</span>
           </div>
         } @else {
           <div class="badge-construccion">
@@ -43,7 +49,11 @@
           <h3 class="option-titulo">{{opcion.titulo}}</h3>
           <p class="option-descripcion">{{opcion.descripcion}}</p>
         </div>
-        <lucide-icon name="chevron-right" class="option-arrow"></lucide-icon>
+        @if (opcion.ruta.startsWith('http')) {
+          <lucide-icon name="external-link" class="option-arrow"></lucide-icon>
+        } @else {
+          <lucide-icon name="chevron-right" class="option-arrow"></lucide-icon>
+        }
       </div>
     }
   </div>

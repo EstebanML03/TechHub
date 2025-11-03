@@ -1,0 +1,126 @@
+<div class="terminos-container">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-volver" (click)="volver()">
+      <lucide-icon name="arrow-left"></lucide-icon>
+      Volver
+    </button>
+    
+    <div class="header-content">
+      <div class="header-title">
+        <lucide-icon name="file-text" class="header-icon"></lucide-icon>
+        <div>
+          <h1>Términos y Condiciones</h1>
+          <p class="fecha-actualizacion">Última actualización: {{ fechaActualizacion }}</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="imprimirTerminos()">
+          <lucide-icon name="printer"></lucide-icon>
+          Imprimir
+        </button>
+        <button class="btn btn-primary" (click)="descargarPDF()">
+          <lucide-icon name="download"></lucide-icon>
+          Descargar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="contenido">
+    <!-- Navegación lateral -->
+    <aside class="navegacion">
+      <div class="nav-sticky">
+        <h3>Índice de contenidos</h3>
+        <nav class="nav-list">
+          @for (seccion of secciones; track seccion.id) {
+            <button 
+              class="nav-item"
+              [class.active]="isSeccionActiva(seccion.id)"
+              (click)="scrollToSection(seccion.id)"
+            >
+              <lucide-icon [name]="seccion.icono"></lucide-icon>
+              <span>{{ seccion.titulo }}</span>
+            </button>
+          }
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Contenido de términos -->
+    <main class="terminos-main">
+      <div class="introduccion card">
+        <lucide-icon name="info" class="intro-icon"></lucide-icon>
+        <div>
+          <h2>Bienvenido a TechHub</h2>
+          <p>
+            Estos Términos y Condiciones regulan el uso de nuestra plataforma y servicios. 
+            Al acceder o utilizar TechHub, usted acepta cumplir con estos términos. 
+            Por favor, léalos cuidadosamente antes de utilizar nuestros servicios.
+          </p>
+          <p>
+            Si tiene alguna pregunta sobre estos términos, no dude en contactarnos a través 
+            de los canales indicados al final de este documento.
+          </p>
+        </div>
+      </div>
+
+      <!-- Secciones de términos -->
+      <div class="secciones-terminos">
+        @for (seccion of secciones; track seccion.id) {
+          <section [id]="seccion.id" class="seccion-termino card">
+            <div class="seccion-header" (click)="toggleSeccion(seccion.id)">
+              <div class="seccion-titulo">
+                <lucide-icon [name]="seccion.icono"></lucide-icon>
+                <h2>{{ seccion.titulo }}</h2>
+              </div>
+              <lucide-icon 
+                [name]="isSeccionActiva(seccion.id) ? 'chevron-up' : 'chevron-down'"
+                class="toggle-icon"
+              ></lucide-icon>
+            </div>
+
+            @if (isSeccionActiva(seccion.id)) {
+              <div class="seccion-contenido">
+                @for (subseccion of seccion.subsecciones; track subseccion.titulo) {
+                  <div class="subseccion">
+                    <h3>{{ subseccion.titulo }}</h3>
+                    <ul>
+                      @for (item of subseccion.contenido; track item) {
+                        <li>{{ item }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            }
+          </section>
+        }
+      </div>
+
+      <!-- Footer legal -->
+      <div class="footer-legal card">
+        <lucide-icon name="alert-circle"></lucide-icon>
+        <div>
+          <h3>Información Importante</h3>
+          <p>
+            Al continuar usando TechHub, usted reconoce que ha leído, entendido y acepta 
+            estar vinculado por estos Términos y Condiciones, así como nuestra Política de Privacidad.
+          </p>
+          <p>
+            Estos términos pueden ser actualizados periódicamente. Es su responsabilidad 
+            revisarlos regularmente. El uso continuado de nuestros servicios después de 
+            cualquier cambio constituye su aceptación de los nuevos términos.
+          </p>
+          <div class="contacto-legal">
+            <p><strong>Preguntas legales:</strong></p>
+            <p>Email: <a href="mailto:legal@techhub.com">legal@techhub.com</a></p>
+            <p>Teléfono: +1 (555) 123-4567</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

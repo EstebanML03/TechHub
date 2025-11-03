@@ -61,6 +61,22 @@ export class SettingsComponent implements OnInit {
       ruta: '/settings/tema',
       color: 'info',
       disponible: true
+    },
+    {
+      titulo: 'Términos y Condiciones',
+      descripcion: 'Lee nuestros términos de servicio y políticas',
+      icon: 'file-text',
+      ruta: '/settings/terminos',
+      color: 'secondary',
+      disponible: true
+    },
+    {
+      titulo: 'Manual de Usuario',
+      descripcion: 'Aprende a usar TechHub con nuestra guía completa',
+      icon: 'book-open',
+      ruta: 'https://wiry-flyingfish-e9a.notion.site/Manual-de-usuario-de-TechHub-f20d8c54b8d44d6a9dc9450ee85e3d30',
+      color: 'info',
+      disponible: true
     }
   ];
 
@@ -70,11 +86,21 @@ export class SettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Mostrar popup informativo al cargar la página
+    // Mostrar popup informativo solo la primera vez
     this.mostrarInfoDesarrollo();
   }
 
   async mostrarInfoDesarrollo(): Promise<void> {
+    // Verificar si el popup ya se mostró antes
+    const popupMostrado = localStorage.getItem('settingsInfoMostrado');
+    
+    // Si ya se mostró, no volver a mostrarlo
+    if (popupMostrado === 'true') {
+      return;
+    }
+
+    // Mostrar el popup
+
     await this.alertService.info(
       '🎨 Estado de los Módulos',
       `
@@ -83,6 +109,8 @@ export class SettingsComponent implements OnInit {
           <ul style="margin: 0 0 16px 20px; padding: 0;">
             <li style="margin-bottom: 8px;">✅ <strong>Mi Perfil</strong> - Ver y editar tu información</li>
             <li style="margin-bottom: 8px;">✅ <strong>Cambiar Contraseña</strong> - Actualizar contraseña de acceso</li>
+            <li style="margin-bottom: 8px;">✅ <strong>Términos y Condiciones</strong> - Políticas completas</li>
+            <li style="margin-bottom: 8px;">📖 <strong>Manual de Usuario</strong> - Guía completa (Notion)</li>
           </ul>
           
           <p style="margin-bottom: 12px;"><strong>En Construcción (Puedes explorarlos):</strong></p>
@@ -99,14 +127,28 @@ export class SettingsComponent implements OnInit {
       `,
       true  // Indicar que es contenido HTML
     );
+
+    // Marcar como mostrado en localStorage
+    localStorage.setItem('settingsInfoMostrado', 'true');
   }
 
   navegarA(opcion: OpcionSettings): void {
-    // Permitir navegación a todos los módulos
-    this.router.navigate([opcion.ruta]);
+    // Si es una URL externa (comienza con http o https), abrir en nueva pestaña
+    if (opcion.ruta.startsWith('http://') || opcion.ruta.startsWith('https://')) {
+      window.open(opcion.ruta, '_blank', 'noopener,noreferrer');
+    } else {
+      // Navegación interna
+      this.router.navigate([opcion.ruta]);
+    }
   }
 
   volverHome(): void {
     this.router.navigate(['/home']);
+  }
+
+  // Método para resetear el popup (útil para desarrollo o testing)
+  resetearPopupInfo(): void {
+    localStorage.removeItem('settingsInfoMostrado');
+    console.log('✅ Popup de información reseteado. Se mostrará en la próxima visita.');
   }
 }

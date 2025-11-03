@@ -1,33 +1,67 @@
 export interface Evento {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  fecha: Date;
-  hora: string;
-  ubicacion: string;
-  categoria: CategoriaEvento;
-  organizador: string;
-  capacidadMaxima: number;
-  inscritos: string[]; // IDs de usuarios inscritos
-  likes: string[]; // IDs de usuarios que dieron like
-  imagen?: string;
-  createdAt: Date;
+  id_evento?: number;
+  nombre: string;
+  descripcion?: string;
+  fecha_evento: Date | string;
+  hora_evento?: string;
+  lugar?: string;
+  modalidad?: string; // 'presencial', 'virtual', 'híbrido'
+  id_categoria?: number;
+  id_usuario?: number; // Organizador del evento
 }
 
-export enum CategoriaEvento {
-  TECNOLOGIA = 'Tecnología',
-  NETWORKING = 'Networking',
-  TALLER = 'Taller',
-  CONFERENCIA = 'Conferencia',
-  HACKATHON = 'Hackathon',
-  MEETUP = 'Meetup',
-  SOCIAL = 'Social',
-  OTRO = 'Otro'
+export interface InscripcionEvento {
+  id_inscripcion?: number;
+  id_evento: number;
+  id_usuario: number;
+  fecha_inscripcion?: Date | string;
+}
+
+export interface EventoConRelaciones extends Evento {
+  categoria?: {
+    id_categoria: number;
+    nombre: string;
+  };
+  organizador?: {
+    id_usuario: number;
+    nombre: string;
+    apellido: string;
+    foto_perfil?: string;
+  };
+  inscritos?: {
+    id_usuario: number;
+    nombre: string;
+    apellido: string;
+    foto_perfil?: string;
+    fecha_inscripcion?: Date | string;
+  }[];
+  total_inscritos?: number;
+  esta_inscrito?: boolean; // Si el usuario actual está inscrito
+}
+
+export interface CreateEventoRequest {
+  nombre: string;
+  descripcion?: string;
+  fecha_evento: Date | string;
+  hora_evento?: string;
+  lugar?: string;
+  modalidad?: string;
+  id_categoria?: number;
+}
+
+export interface UpdateEventoRequest {
+  nombre?: string;
+  descripcion?: string;
+  fecha_evento?: Date | string;
+  hora_evento?: string;
+  lugar?: string;
+  modalidad?: string;
+  id_categoria?: number;
 }
 
 export interface FiltroEventos {
-  categoria?: CategoriaEvento;
   busqueda?: string;
-  fechaDesde?: Date;
-  fechaHasta?: Date;
+  modalidad?: string;
+  fecha_desde?: string;
+  fecha_hasta?: string;
 }

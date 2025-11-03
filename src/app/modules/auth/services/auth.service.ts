@@ -14,6 +14,25 @@ export class AuthService {
       });
       const { token } = response.data;
       localStorage.setItem('token', token); // Guardar el token en localStorage
+      
+      // Obtener el perfil del usuario y guardar sus datos
+      try {
+        const userProfile = await this.getCurrentUser();
+        console.log('👤 Perfil del usuario:', userProfile);
+        
+        // Guardar datos del usuario en localStorage
+        if (userProfile.data) {
+          const user = userProfile.data;
+          localStorage.setItem('userId', user.id_usuario?.toString() || user.id?.toString() || '');
+          localStorage.setItem('userName', user.nombre || '');
+          localStorage.setItem('userEmail', user.correo || '');
+          localStorage.setItem('rol', user.id_rol?.toString() || '0');
+          
+          console.log('✅ Datos del usuario guardados en localStorage');
+        }
+      } catch (profileError) {
+        console.warn('⚠️ No se pudo obtener el perfil del usuario:', profileError);
+      }
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
       throw error;
@@ -42,6 +61,10 @@ export class AuthService {
   // Método para cerrar sesión
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('rol');
   }
 
   // Método para verificar si el usuario está autenticado

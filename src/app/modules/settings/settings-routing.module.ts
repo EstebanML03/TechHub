@@ -25,6 +25,10 @@ const routes: Routes = [
   {
     path: 'tema',
     loadComponent: () => import('./pages/tema/tema').then(m => m.TemaComponent)
+  },
+  {
+    path: 'terminos',
+    loadComponent: () => import('./pages/terminos/terminos').then(m => m.TerminosComponent)
   }
 ];
 
