@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Perfil as PerfilModel } from '../../models/perfil.model';
+import { UsuarioPerfil } from '../../models/perfil.model';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { PerfilService } from '../../services/perfil.service';
 
 interface Estadistica {
   label: string;
@@ -23,19 +24,12 @@ interface ActividadReciente {
   styleUrl: './perfil.css',
 })
 export class Perfil implements OnInit {
-  perfil: PerfilModel = {
-    nombre: 'Juan Pérez',
-    email: 'juan.perez@techhub.com',
-    avatar: '',
-    bio: 'Desarrollador Full Stack apasionado por crear soluciones innovadoras. Me encanta aprender nuevas tecnologías y compartir conocimiento con la comunidad.',
-    rol: 'Senior Full Stack Developer',
-    ubicacion: 'Madrid, España',
-    empresa: 'TechHub Solutions',
-    website: 'https://juanperez.dev',
-    github: 'github.com/juanperez',
-    linkedin: 'linkedin.com/in/juanperez',
-    skills: ['JavaScript', 'TypeScript', 'Angular', 'React', 'Node.js', 'Python', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS'],
-    intereses: ['Inteligencia Artificial', 'Cloud Computing', 'Open Source', 'DevOps', 'Machine Learning', 'Blockchain']
+  perfil: UsuarioPerfil = {
+    nombre: '',
+    apellido: '',
+    cedula: '',
+    correo: '',
+    id_rol: 2 // Usuario por defecto
   };
 
   estadisticas: Estadistica[] = [
@@ -53,19 +47,43 @@ export class Perfil implements OnInit {
   ];
 
   editando: boolean = false;
-  perfilEditado: PerfilModel = { ...this.perfil };
+  perfilEditado: UsuarioPerfil = { ...this.perfil };
   avatarPreview: string = '';
-  iniciales: string = 'JP';
+  iniciales: string = 'U';
+  cargando: boolean = false;
 
-  constructor(private alertService: AlertService) {
+  constructor(
+    private alertService: AlertService,
+    private perfilService: PerfilService
+  ) {
     this.calcularIniciales();
   }
 
-  ngOnInit(): void {}
+  async ngOnInit(): Promise<void> {
+    await this.cargarPerfil();
+  }
+
+  async cargarPerfil(): Promise<void> {
+    this.cargando = true;
+    try {
+      this.perfil = await this.perfilService.obtenerPerfil();
+      this.perfilEditado = { ...this.perfil };
+      this.calcularIniciales();
+    } catch (error) {
+      console.error('Error al cargar perfil:', error);
+      await this.alertService.error('Error', 'No se pudo cargar el perfil');
+    } finally {
+      this.cargando = false;
+    }
+  }
 
   calcularIniciales(): void {
+    if (!this.perfil.nombre) {
+      this.iniciales = 'U';
+      return;
+    }
     const nombres = this.perfil.nombre.split(' ');
-    this.iniciales = nombres.map(n => n.charAt(0)).join('').substring(0, 2).toUpperCase();
+    this.iniciales = nombres.map((n: string) => n.charAt(0)).join('').substring(0, 2).toUpperCase();
   }
 
   activarEdicion(): void {
@@ -79,11 +97,36 @@ export class Perfil implements OnInit {
       return;
     }
 
-    this.perfil = { ...this.perfilEditado };
-    this.editando = false;
-    this.calcularIniciales();
+    this.cargando = true;
+    try {
+      // Preparar los datos para enviar a la API
+      const datosActualizados = {
+        nombre: this.perfilEditado.nombre,
+        apellido: this.perfilEditado.apellido,
+        telefono: this.perfilEditado.telefono,
+        carrera: this.perfilEditado.carrera
+      };
 
-    await this.alertService.success('¡Perfil actualizado!', 'Tus cambios se han guardado exitosamente');
+      // Verificar que tenemos el ID del usuario
+      if (!this.perfil.id_usuario) {
+        throw new Error('No se pudo obtener el ID del usuario');
+      }
+
+      // Actualizar el perfil en la API
+      await this.perfilService.actualizarPerfil(this.perfil.id_usuario, datosActualizados);
+      
+      // Actualizar los datos locales
+      this.perfil = { ...this.perfilEditado };
+      this.editando = false;
+      this.calcularIniciales();
+
+      await this.alertService.success('¡Perfil actualizado!', 'Tus cambios se han guardado exitosamente');
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      await this.alertService.error('Error', 'No se pudo actualizar el perfil');
+    } finally {
+      this.cargando = false;
+    }
   }
 
   cancelarEdicion(): void {
@@ -93,7 +136,7 @@ export class Perfil implements OnInit {
   }
 
   validarPerfil(): boolean {
-    return !!(this.perfilEditado.nombre && this.perfilEditado.email && this.perfilEditado.bio);
+    return !!(this.perfilEditado.nombre && this.perfilEditado.correo);
   }
 
   onAvatarChange(event: any): void {
@@ -107,49 +150,13 @@ export class Perfil implements OnInit {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.avatarPreview = e.target.result;
-        this.perfilEditado.avatar = e.target.result;
       };
       reader.readAsDataURL(file);
     }
   }
 
   eliminarAvatar(): void {
-    this.perfilEditado.avatar = '';
     this.avatarPreview = '';
-  }
-
-  agregarSkill(event: any): void {
-    const input = event.target.value.trim();
-    if (input && event.key === 'Enter') {
-      event.preventDefault();
-      if (!this.perfilEditado.skills.includes(input)) {
-        this.perfilEditado.skills.push(input);
-        event.target.value = '';
-      } else {
-        this.alertService.warning('Skill duplicado', 'Esta habilidad ya está en tu perfil');
-      }
-    }
-  }
-
-  eliminarSkill(index: number): void {
-    this.perfilEditado.skills.splice(index, 1);
-  }
-
-  agregarInteres(event: any): void {
-    const input = event.target.value.trim();
-    if (input && event.key === 'Enter') {
-      event.preventDefault();
-      if (!this.perfilEditado.intereses.includes(input)) {
-        this.perfilEditado.intereses.push(input);
-        event.target.value = '';
-      } else {
-        this.alertService.warning('Interés duplicado', 'Este interés ya está en tu perfil');
-      }
-    }
-  }
-
-  eliminarInteres(index: number): void {
-    this.perfilEditado.intereses.splice(index, 1);
   }
 
   getActividadIcon(tipo: string): string {

@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 const apiClient = axios.create({
-  baseURL: process.env['API_BASE_URL'] as string,
+  baseURL: environment.API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,6 +24,13 @@ apiClient.interceptors.response.use((response: any) => {
   return response;
 }, (error: any) => {
   console.error('API Error:', error.response || error.message);
+  
+  // Si el error es 401 (No autorizado), eliminar el token y redirigir al login
+  if (error.response?.status === 401) {
+    localStorage.removeItem('token');
+    window.location.href = '/auth';
+  }
+  
   return Promise.reject(error);
 });
 

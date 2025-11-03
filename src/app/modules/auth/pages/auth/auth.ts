@@ -31,6 +31,10 @@ export class AuthComponent {
 
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      cedula: ['', [Validators.required, Validators.minLength(6)]],
+      telefono: ['', [Validators.required, Validators.minLength(10)]],
+      carrera: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
@@ -92,15 +96,21 @@ export class AuthComponent {
     this.cargando = true;
 
     try {
-      const { nombre, email } = this.registerForm.value;
+      const { nombre, apellido, cedula, telefono, carrera, email, password } = this.registerForm.value;
       await this.authService.register({
         nombre,
-        apellido: '', // Puedes agregar un campo para el apellido si es necesario
+        apellido,
         email,
         password,
-        cedula: '', // Puedes agregar un campo para la cédula si es necesario
+        cedula,
+        telefono,
+        carrera,
         id_rol: 2 // Rol predeterminado para nuevos usuarios
       });
+      
+      // Iniciar sesión automáticamente después del registro
+      await this.authService.login(email, password);
+      
       this.alertService.success('¡Cuenta creada!', 'Registro exitoso. Bienvenido a TechHub');
       this.router.navigate(['/home']);
     } catch (error) {

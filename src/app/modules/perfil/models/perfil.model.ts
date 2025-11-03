@@ -1,14 +1,2 @@
-export interface Perfil {
-  nombre: string;
-  email: string;
-  avatar: string;
-  bio: string;
-  rol: string;
-  ubicacion: string;
-  empresa: string;
-  website: string;
-  github: string;
-  linkedin: string;
-  skills: string[];
-  intereses: string[];
-}
+// Re-exportar el tipo de usuario desde el módulo de auth
+export type { UsuarioSinContrasena as UsuarioPerfil } from '../../auth/models/usuario.model';

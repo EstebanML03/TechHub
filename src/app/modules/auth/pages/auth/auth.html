@@ -136,20 +136,92 @@
       <!-- Formulario de Registro -->
       @if (!mostrarLogin) {
         <form [formGroup]="registerForm" (ngSubmit)="registrar()" class="auth-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="register-name">Nombre</label>
+              <div class="input-wrapper" [class.error]="hasError('register', 'nombre')">
+                <lucide-icon name="user"></lucide-icon>
+                <input
+                  id="register-name"
+                  type="text"
+                  formControlName="nombre"
+                  placeholder="Juan"
+                  [class.invalid]="hasError('register', 'nombre')"
+                />
+              </div>
+              @if (hasError('register', 'nombre')) {
+                <span class="error-message">{{ getErrorMessage('register', 'nombre') }}</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="register-apellido">Apellido</label>
+              <div class="input-wrapper" [class.error]="hasError('register', 'apellido')">
+                <lucide-icon name="user"></lucide-icon>
+                <input
+                  id="register-apellido"
+                  type="text"
+                  formControlName="apellido"
+                  placeholder="Pérez"
+                  [class.invalid]="hasError('register', 'apellido')"
+                />
+              </div>
+              @if (hasError('register', 'apellido')) {
+                <span class="error-message">{{ getErrorMessage('register', 'apellido') }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="register-cedula">Cédula</label>
+              <div class="input-wrapper" [class.error]="hasError('register', 'cedula')">
+                <lucide-icon name="credit-card"></lucide-icon>
+                <input
+                  id="register-cedula"
+                  type="text"
+                  formControlName="cedula"
+                  placeholder="1234567890"
+                  [class.invalid]="hasError('register', 'cedula')"
+                />
+              </div>
+              @if (hasError('register', 'cedula')) {
+                <span class="error-message">{{ getErrorMessage('register', 'cedula') }}</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="register-telefono">Teléfono</label>
+              <div class="input-wrapper" [class.error]="hasError('register', 'telefono')">
+                <lucide-icon name="phone"></lucide-icon>
+                <input
+                  id="register-telefono"
+                  type="tel"
+                  formControlName="telefono"
+                  placeholder="3001234567"
+                  [class.invalid]="hasError('register', 'telefono')"
+                />
+              </div>
+              @if (hasError('register', 'telefono')) {
+                <span class="error-message">{{ getErrorMessage('register', 'telefono') }}</span>
+              }
+            </div>
+          </div>
+
           <div class="form-group">
-            <label for="register-name">Nombre completo</label>
-            <div class="input-wrapper" [class.error]="hasError('register', 'nombre')">
-              <lucide-icon name="user"></lucide-icon>
+            <label for="register-carrera">Carrera</label>
+            <div class="input-wrapper" [class.error]="hasError('register', 'carrera')">
+              <lucide-icon name="graduation-cap"></lucide-icon>
               <input
-                id="register-name"
+                id="register-carrera"
                 type="text"
-                formControlName="nombre"
-                placeholder="Juan Pérez"
-                [class.invalid]="hasError('register', 'nombre')"
+                formControlName="carrera"
+                placeholder="Ingeniería de Sistemas"
+                [class.invalid]="hasError('register', 'carrera')"
               />
             </div>
-            @if (hasError('register', 'nombre')) {
-              <span class="error-message">{{ getErrorMessage('register', 'nombre') }}</span>
+            @if (hasError('register', 'carrera')) {
+              <span class="error-message">{{ getErrorMessage('register', 'carrera') }}</span>
             }
           </div>
 
