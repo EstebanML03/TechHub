@@ -59,7 +59,6 @@ export class Emprendimientos implements OnInit {
       this.emprendimientos = await this.emprendimientosService.obtenerEmprendimientos();
       this.totalItems = this.emprendimientos.length;
     } catch (error: any) {
-      console.error('Error al cargar emprendimientos:', error);
       const mensaje = error.response?.data?.message || error.response?.data?.error || error.message || 'No se pudieron cargar los emprendimientos';
       
       if (error.response?.status !== 400 && error.response?.status !== 404) {

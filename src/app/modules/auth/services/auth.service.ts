@@ -18,13 +18,9 @@ export class AuthService {
       // Obtener el perfil del usuario y guardar sus datos
       try {
         const userProfile = await this.getCurrentUser();
-        console.log('👤 Perfil del usuario (respuesta completa):', userProfile);
-        console.log('👤 userProfile.data:', userProfile.data);
-        console.log('👤 userProfile.data?.data:', userProfile.data?.data);
         
         // La respuesta puede venir en diferentes formatos
         const user = userProfile.data?.data || userProfile.data || userProfile;
-        console.log('👤 Usuario extraído:', user);
         
         if (user && user.id_usuario) {
           // Guardar datos individuales (compatibilidad)
@@ -35,20 +31,11 @@ export class AuthService {
           
           // Guardar objeto completo del usuario (para otros componentes)
           localStorage.setItem('usuario', JSON.stringify(user));
-          
-          console.log('✅ Datos del usuario guardados en localStorage:');
-          console.log('   - userId:', localStorage.getItem('userId'));
-          console.log('   - userName:', localStorage.getItem('userName'));
-          console.log('   - userEmail:', localStorage.getItem('userEmail'));
-          console.log('   - rol:', localStorage.getItem('rol'));
-        } else {
-          console.error('❌ No se pudo extraer el usuario de la respuesta');
         }
       } catch (profileError) {
-        console.warn('⚠️ No se pudo obtener el perfil del usuario:', profileError);
+        // Error silencioso
       }
     } catch (error) {
-      console.error('Error en el inicio de sesión:', error);
       throw error;
     }
   }
@@ -67,7 +54,6 @@ export class AuthService {
         id_rol: userData.id_rol
       });
     } catch (error) {
-      console.error('Error en el registro:', error);
       throw error;
     }
   }
@@ -98,7 +84,6 @@ export class AuthService {
       const response = await apiClient.get('/usuarios/profile');
       return response.data;
     } catch (error) {
-      console.error('Error al obtener el usuario actual:', error);
       // Si falla (token inválido/expirado), hacer logout
       this.logout();
       throw error;

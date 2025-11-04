@@ -86,7 +86,6 @@ export class Grupos implements OnInit {
         this.cargando = false;
       },
       error: (error) => {
-        console.error('Error al cargar grupos:', error);
         this.cargando = false;
         
         if (error.response?.status === 404 || error.response?.status === 500) {
@@ -157,8 +156,7 @@ export class Grupos implements OnInit {
         this.toggleFormulario();
         this.cargarGrupos();
       },
-      error: (error) => {
-        console.error('Error al crear grupo:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo crear el grupo');
         this.cargando = false;
       }
@@ -196,8 +194,7 @@ export class Grupos implements OnInit {
         this.toggleFormulario();
         this.cargarGrupos();
       },
-      error: (error) => {
-        console.error('Error al actualizar grupo:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo actualizar el grupo');
         this.cargando = false;
       }
@@ -227,9 +224,7 @@ export class Grupos implements OnInit {
       next: (miembros) => {
         this.miembros = miembros;
       },
-      error: (error) => {
-        console.error('Error al cargar miembros:', error);
-      }
+      error: () => {}
     });
   }
 
@@ -245,8 +240,7 @@ export class Grupos implements OnInit {
             this.cerrarDetalle();
             this.cargarGrupos();
           },
-          error: (error) => {
-            console.error('Error al eliminar grupo:', error);
+          error: () => {
             this.alertService.error('Error', 'No se pudo eliminar el grupo');
           }
         });
@@ -268,8 +262,7 @@ export class Grupos implements OnInit {
             this.cerrarDetalle();
             this.cargarGrupos();
           },
-          error: (error) => {
-            console.error('Error al salir del grupo:', error);
+          error: () => {
             this.alertService.error('Error', 'No se pudo salir del grupo');
           }
         });
@@ -284,8 +277,7 @@ export class Grupos implements OnInit {
         this.cargarMiembros(grupoId);
         this.cargarGrupos();
       },
-      error: (error) => {
-        console.error('Error al cambiar rol:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo cambiar el rol del miembro');
       }
     });
@@ -303,8 +295,7 @@ export class Grupos implements OnInit {
             this.cargarMiembros(grupoId);
             this.cargarGrupos();
           },
-          error: (error) => {
-            console.error('Error al remover miembro:', error);
+          error: () => {
             this.alertService.error('Error', 'No se pudo remover al miembro');
           }
         });
@@ -363,9 +354,6 @@ export class Grupos implements OnInit {
           this.cargando = false;
         },
         error: (error) => {
-          console.error('Error al agregar miembro:', error);
-          console.error('Response data:', error.response?.data);
-          
           let mensaje = 'No se pudo agregar al miembro';
           
           if (error.response?.data?.error) {
@@ -383,7 +371,6 @@ export class Grupos implements OnInit {
         }
       });
     } catch (error) {
-      console.error('Error al buscar usuario:', error);
       this.alertService.error('Error', 'No se pudo buscar el usuario. Verifica tu conexión.');
       this.cargando = false;
     }
@@ -406,8 +393,6 @@ export class Grupos implements OnInit {
         this.cargando = false;
       },
       error: (error) => {
-        console.error('Error al unirse al grupo:', error);
-        
         let mensaje = 'No se pudo unir al grupo';
         if (error.response?.data?.error) {
           mensaje = error.response.data.error;

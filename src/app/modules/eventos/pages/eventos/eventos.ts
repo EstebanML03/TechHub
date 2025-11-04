@@ -85,9 +85,7 @@ export class Eventos implements OnInit {
       const todasCategorias = await this.categoriasService.obtenerCategorias();
       // Excluir la categoría "Emprendimiento" (id_categoria = 9)
       this.categoriasDisponibles = todasCategorias.filter(cat => cat.id_categoria !== 9);
-      console.log('📂 Categorías disponibles (sin emprendimiento):', this.categoriasDisponibles);
     } catch (error: any) {
-      console.error('Error al cargar categorías:', error);
       // No mostrar error si el endpoint no existe
       if (error.response?.status !== 404 && error.response?.status !== 400) {
         this.alertService.warning('Categorías no disponibles', 'No se pudieron cargar las categorías');
@@ -106,15 +104,9 @@ export class Eventos implements OnInit {
         case 'inscritos':
           this.eventosInscritos = await this.eventosService.obtenerEventosInscritos();
           this.totalItems = this.eventosInscritos.length;
-          
-          // Mostrar mensaje si no hay eventos inscritos
-          if (this.eventosInscritos.length === 0) {
-            console.log('ℹ️ No estás inscrito en ningún evento aún');
-          }
           break;
       }
     } catch (error: any) {
-      console.error('Error al cargar eventos:', error);
       const mensaje = error.response?.data?.message || error.response?.data?.error || error.message || 'No se pudieron cargar los eventos';
       
       // Solo mostrar error si no es 400/404 (endpoints no implementados)

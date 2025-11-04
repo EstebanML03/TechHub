@@ -164,15 +164,11 @@ export class PasswordComponent {
     this.cargando = true;
 
     try {
-      console.log('🔐 Iniciando cambio de contraseña...');
-      
       const passwordActual = this.passwordForm.get('passwordActual')?.value;
       const passwordNueva = this.passwordForm.get('passwordNueva')?.value;
 
       // Llamar a la API para cambiar la contraseña
       await this.perfilService.cambiarContrasena(passwordActual, passwordNueva);
-
-      console.log('✅ Contraseña cambiada exitosamente');
 
       this.cargando = false;
       
@@ -192,7 +188,6 @@ export class PasswordComponent {
       }, 1500);
 
     } catch (error: any) {
-      console.error('❌ Error al cambiar la contraseña:', error);
       this.cargando = false;
 
       // Manejar diferentes tipos de errores

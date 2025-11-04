@@ -11,10 +11,8 @@ export class ComunidadService {
   async obtenerMiembros(): Promise<Miembro[]> {
     try {
       const response = await apiClient.get('/usuarios');
-      console.log('🔧 Respuesta de /usuarios:', response);
       return response.data.data || response.data || [];
     } catch (error) {
-      console.error('❌ Error al obtener miembros:', error);
       throw error;
     }
   }

@@ -87,9 +87,6 @@ export class Blog implements OnInit {
       }
     }
     
-    console.log('🔍 Blog - Usuario actual:', this.usuarioActual);
-    console.log('🔍 Blog - Token:', localStorage.getItem('token'));
-    console.log('🔍 Blog - UserId:', localStorage.getItem('userId'));
     this.cargarDatos();
   }
 
@@ -105,7 +102,6 @@ export class Blog implements OnInit {
       // Cargar publicaciones
       await this.cargarPublicaciones();
     } catch (error: any) {
-      console.error('Error al cargar datos:', error);
       this.alertService.error('Error', 'No se pudieron cargar los datos del blog');
     } finally {
       this.cargando = false;
@@ -125,12 +121,11 @@ export class Blog implements OnInit {
               next: (result) => {
                 this.comentariosCount[pub.id_publicacion] = result.count;
               },
-              error: (error) => console.error('Error al contar comentarios:', error)
+              error: () => {}
             });
           });
         },
         error: (error) => {
-          console.error('Error al cargar publicaciones:', error);
           this.cargando = false;
           
           // Si el endpoint no existe (404) o hay un error del servidor (500)
@@ -151,7 +146,6 @@ export class Blog implements OnInit {
         }
       });
     } catch (error) {
-      console.error('Error:', error);
       this.cargando = false;
       this.publicaciones = [];
       this.aplicarFiltros();
@@ -162,7 +156,7 @@ export class Blog implements OnInit {
     try {
       this.categorias = await this.categoriasService.obtenerCategorias();
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
+      // Error silencioso
     }
   }
 
@@ -172,12 +166,10 @@ export class Blog implements OnInit {
         next: (etiquetas) => {
           this.etiquetas = etiquetas;
         },
-        error: (error) => {
-          console.error('Error al cargar etiquetas:', error);
-        }
+        error: () => {}
       });
     } catch (error) {
-      console.error('Error:', error);
+      // Error silencioso
     }
   }
 
@@ -261,8 +253,7 @@ export class Blog implements OnInit {
         this.toggleFormulario();
         this.cargarPublicaciones();
       },
-      error: (error) => {
-        console.error('Error al crear publicación:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo crear la publicación');
         this.cargando = false;
       }
@@ -286,8 +277,7 @@ export class Blog implements OnInit {
         this.toggleFormulario();
         this.cargarPublicaciones();
       },
-      error: (error) => {
-        console.error('Error al actualizar publicación:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo actualizar la publicación');
         this.cargando = false;
       }
@@ -319,9 +309,7 @@ export class Blog implements OnInit {
       next: (comentarios) => {
         this.comentarios = comentarios;
       },
-      error: (error) => {
-        console.error('Error al cargar comentarios:', error);
-      }
+      error: () => {}
     });
   }
 
@@ -343,8 +331,7 @@ export class Blog implements OnInit {
         this.nuevoComentario = '';
         this.alertService.toast('Comentario agregado', 'success');
       },
-      error: (error) => {
-        console.error('Error al agregar comentario:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo agregar el comentario');
       }
     });
@@ -375,8 +362,7 @@ export class Blog implements OnInit {
         this.cancelarEdicion();
         this.alertService.toast('Comentario actualizado', 'success');
       },
-      error: (error) => {
-        console.error('Error al actualizar comentario:', error);
+      error: () => {
         this.alertService.error('Error', 'No se pudo actualizar el comentario');
       }
     });
@@ -394,8 +380,7 @@ export class Blog implements OnInit {
             this.comentariosCount[publicacionId] = Math.max(0, (this.comentariosCount[publicacionId] || 0) - 1);
             this.alertService.toast('Comentario eliminado', 'success');
           },
-          error: (error) => {
-            console.error('Error al eliminar comentario:', error);
+          error: () => {
             this.alertService.error('Error', 'No se pudo eliminar el comentario');
           }
         });
@@ -415,8 +400,7 @@ export class Blog implements OnInit {
             this.cargarPublicaciones();
             this.alertService.toast('Publicación eliminada', 'success');
           },
-          error: (error) => {
-            console.error('Error al eliminar publicación:', error);
+          error: () => {
             this.alertService.error('Error', 'No se pudo eliminar la publicación');
           }
         });

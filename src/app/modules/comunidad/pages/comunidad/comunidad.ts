@@ -29,15 +29,12 @@ export class Comunidad implements OnInit {
   }
 
   async cargarMiembros(): Promise<void> {
-    console.log('🔧 Cargando miembros de la comunidad...');
     this.cargando = true;
     try {
       this.miembros = await this.comunidadService.obtenerMiembros();
       this.miembrosFiltrados = [...this.miembros];
       this.extraerCarreras();
-      console.log('🔧 Miembros cargados:', this.miembros);
     } catch (error) {
-      console.error('❌ Error al cargar miembros:', error);
       await this.alertService.error('Error', 'No se pudieron cargar los miembros de la comunidad');
     } finally {
       this.cargando = false;

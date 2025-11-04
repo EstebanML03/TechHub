@@ -16,10 +16,7 @@ export class EmprendimientosService {
    */
   async obtenerEmprendimientos(): Promise<EventoConRelaciones[]> {
     try {
-      console.log('💼 Obteniendo todos los emprendimientos...');
-      
       const response = await apiClient.get('/eventos?select=*');
-      console.log('✅ Eventos obtenidos:', response.data);
       
       const eventos = response.data?.data || response.data || [];
       
@@ -27,8 +24,6 @@ export class EmprendimientosService {
       const emprendimientos = eventos.filter((evento: any) => 
         evento.id_categoria === CATEGORIA_EMPRENDIMIENTO_ID
       );
-      
-      console.log(`✅ ${emprendimientos.length} emprendimientos encontrados`);
       
       return emprendimientos.map((evento: any) => ({
         ...evento,
@@ -39,9 +34,6 @@ export class EmprendimientosService {
         esta_inscrito: evento.esta_inscrito || false
       }));
     } catch (error: any) {
-      console.error('❌ Error al obtener emprendimientos:', error);
-      console.error('❌ Error response:', error.response);
-      console.error('❌ Error data:', error.response?.data);
       throw error;
     }
   }
@@ -51,9 +43,7 @@ export class EmprendimientosService {
    */
   async obtenerEmprendimientoPorId(id: number): Promise<EventoConRelaciones> {
     try {
-      console.log(`💼 Obteniendo emprendimiento con ID: ${id}`);
       const response = await apiClient.get(`/eventos/${id}`);
-      console.log('✅ Emprendimiento obtenido:', response.data);
       
       if (response.data && response.data.data) {
         return response.data.data;
@@ -61,7 +51,6 @@ export class EmprendimientosService {
       
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener emprendimiento ${id}:`, error);
       throw error;
     }
   }
@@ -71,8 +60,6 @@ export class EmprendimientosService {
    */
   async obtenerMisEmprendimientos(): Promise<EventoConRelaciones[]> {
     try {
-      console.log('💼 Obteniendo mis emprendimientos creados...');
-      
       // Obtener todos los eventos
       const response = await apiClient.get('/eventos');
       const todosEventos = response.data?.data || response.data || [];
@@ -90,8 +77,6 @@ export class EmprendimientosService {
         userId = parseInt(localStorage.getItem('id') || '0');
       }
       
-      console.log('👤 Mi userId desde localStorage:', userId);
-      
       // Filtrar: eventos creados por mí Y con categoría emprendimiento
       const misEmprendimientos = todosEventos.filter((evento: any) => {
         const eventoUserId = parseInt(evento.id_usuario) || evento.id_usuario;
@@ -99,8 +84,6 @@ export class EmprendimientosService {
         const esEmprendimiento = evento.id_categoria === CATEGORIA_EMPRENDIMIENTO_ID;
         return esMio && esEmprendimiento;
       });
-      
-      console.log(`✅ Encontrados ${misEmprendimientos.length} emprendimientos creados por mí`);
       
       return misEmprendimientos.map((evento: any) => ({
         ...evento,
@@ -111,7 +94,6 @@ export class EmprendimientosService {
         esta_inscrito: evento.esta_inscrito || false
       }));
     } catch (error: any) {
-      console.error('❌ Error al obtener mis emprendimientos:', error);
       throw error;
     }
   }
@@ -135,15 +117,9 @@ export class EmprendimientosService {
       }
       
       // Forzar la categoría a emprendimiento (id = 9)
-      const emprendimientoConUsuario = {
-        ...data,
-        id_usuario: userId,
-        id_categoria: CATEGORIA_EMPRENDIMIENTO_ID
-      };
+      const emprendimientoConDatos = { ...data, id_usuario: userId, id_categoria: CATEGORIA_EMPRENDIMIENTO_ID };
       
-      console.log('💼 Creando nuevo emprendimiento:', emprendimientoConUsuario);
-      const response = await apiClient.post('/eventos', emprendimientoConUsuario);
-      console.log('✅ Emprendimiento creado:', response.data);
+      const response = await apiClient.post('/eventos', emprendimientoConDatos);
       
       if (response.data && response.data.data) {
         return response.data.data;
@@ -151,7 +127,6 @@ export class EmprendimientosService {
       
       return response.data;
     } catch (error: any) {
-      console.error('❌ Error al crear emprendimiento:', error);
       throw error;
     }
   }
@@ -167,9 +142,7 @@ export class EmprendimientosService {
         id_categoria: CATEGORIA_EMPRENDIMIENTO_ID
       };
       
-      console.log(`💼 Actualizando emprendimiento ${id}:`, dataConCategoria);
       const response = await apiClient.put(`/eventos/${id}`, dataConCategoria);
-      console.log('✅ Emprendimiento actualizado:', response.data);
       
       if (response.data && response.data.data) {
         return response.data.data;
@@ -177,8 +150,6 @@ export class EmprendimientosService {
       
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al actualizar emprendimiento ${id}:`, error);
-      
       if (error.response?.status === 403) {
         throw new Error('No tienes permisos para actualizar este emprendimiento (solo admin)');
       }
@@ -192,12 +163,8 @@ export class EmprendimientosService {
    */
   async eliminarEmprendimiento(id: number): Promise<void> {
     try {
-      console.log(`💼 Eliminando emprendimiento ${id}...`);
       await apiClient.delete(`/eventos/${id}`);
-      console.log('✅ Emprendimiento eliminado exitosamente');
     } catch (error: any) {
-      console.error(`❌ Error al eliminar emprendimiento ${id}:`, error);
-      
       if (error.response?.status === 403) {
         throw new Error('No tienes permisos para eliminar este emprendimiento (solo admin)');
       }
@@ -211,14 +178,10 @@ export class EmprendimientosService {
    */
   async inscribirseEmprendimiento(idEmprendimiento: number): Promise<any> {
     try {
-      console.log(`💼 Inscribiéndose al emprendimiento ${idEmprendimiento}...`);
       const response = await apiClient.post(`/eventos/${idEmprendimiento}/inscribirse`);
-      console.log('✅ Inscripción exitosa:', response.data);
       
       return response.data?.data || response.data;
     } catch (error: any) {
-      console.error(`❌ Error al inscribirse al emprendimiento ${idEmprendimiento}:`, error);
-      
       if (error.response?.status === 409) {
         throw new Error('Ya estás inscrito en este emprendimiento');
       }
@@ -232,11 +195,8 @@ export class EmprendimientosService {
    */
   async cancelarInscripcion(idEmprendimiento: number): Promise<void> {
     try {
-      console.log(`💼 Cancelando inscripción del emprendimiento ${idEmprendimiento}...`);
       await apiClient.delete(`/eventos/${idEmprendimiento}/cancelar-inscripcion`);
-      console.log('✅ Inscripción cancelada');
     } catch (error: any) {
-      console.error(`❌ Error al cancelar inscripción del emprendimiento ${idEmprendimiento}:`, error);
       
       if (error.response?.status === 404) {
         throw new Error('No estás inscrito en este emprendimiento');
@@ -251,9 +211,7 @@ export class EmprendimientosService {
    */
   async obtenerEmprendimientosInscritos(): Promise<EventoConRelaciones[]> {
     try {
-      console.log('💼 Obteniendo emprendimientos inscritos...');
       const response = await apiClient.get('/eventos/mis-eventos');
-      console.log('✅ Eventos inscritos obtenidos:', response.data);
       
       const eventos = response.data?.data || response.data || [];
       
@@ -271,10 +229,7 @@ export class EmprendimientosService {
         esta_inscrito: true
       }));
     } catch (error: any) {
-      console.error('❌ Error al obtener emprendimientos inscritos:', error);
-      
       if (error.response?.status === 400 || error.response?.status === 404) {
-        console.warn('⚠️ Endpoint /eventos/mis-eventos no está disponible aún');
         return [];
       }
       

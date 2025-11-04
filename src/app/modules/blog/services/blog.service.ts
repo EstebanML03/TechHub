@@ -19,7 +19,6 @@ export class BlogService {
   public publicaciones$ = this.publicacionesSubject.asObservable();
 
   constructor() {
-    console.warn('BlogService is deprecated. Use PublicacionesService instead.');
   }
 
   getPublicaciones(): Observable<Publicacion[]> {

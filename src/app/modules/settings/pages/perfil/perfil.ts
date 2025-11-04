@@ -39,31 +39,23 @@ export class Perfil implements OnInit {
     private perfilService: PerfilService,
     private router: Router
   ) {
-    console.log('🔧 Perfil constructor ejecutado');
     this.calcularIniciales();
   }
 
   async ngOnInit(): Promise<void> {
-    console.log('🔧 Perfil ngOnInit ejecutado');
     await this.cargarPerfil();
   }
 
   async cargarPerfil(): Promise<void> {
-    console.log('🔧 Cargando perfil...');
     this.cargando = true;
     try {
-      console.log('🔧 Llamando a perfilService.obtenerPerfil()');
       this.perfil = await this.perfilService.obtenerPerfil();
-      console.log('🔧 Perfil cargado:', this.perfil);
       this.perfilEditado = { ...this.perfil };
       this.calcularIniciales();
-      console.log('🔧 Iniciales calculadas:', this.iniciales);
     } catch (error) {
-      console.error('❌ Error al cargar perfil:', error);
       await this.alertService.error('Error', 'No se pudo cargar el perfil');
     } finally {
       this.cargando = false;
-      console.log('🔧 cargando = false');
     }
   }
 
@@ -112,7 +104,6 @@ export class Perfil implements OnInit {
 
       await this.alertService.success('¡Perfil actualizado!', 'Tus cambios se han guardado exitosamente');
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
       await this.alertService.error('Error', 'No se pudo actualizar el perfil');
     } finally {
       this.cargando = false;

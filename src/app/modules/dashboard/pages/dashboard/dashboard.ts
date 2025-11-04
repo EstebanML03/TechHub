@@ -88,20 +88,17 @@ export class Dashboard implements OnInit {
       // Cargar publicaciones
       this.publicacionesService.getPublicaciones().subscribe({
         next: (publicaciones: any[]) => {
-          console.log('📚 Publicaciones cargadas:', publicaciones);
           this.stats.totalPublicaciones = publicaciones.length;
           this.stats.misPublicaciones = publicaciones.filter((p: any) => 
             p.id_usuario === this.usuarioActual?.id_usuario
           ).length;
-
-          console.log(`✅ Total: ${this.stats.totalPublicaciones}, Mías: ${this.stats.misPublicaciones}`);
 
           // Top 3 publicaciones más recientes
           this.publicacionesRecientes = publicaciones
             .sort((a: any, b: any) => new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime())
             .slice(0, 3);
         },
-        error: (error: any) => console.error('❌ Error al cargar publicaciones:', error)
+        error: () => {}
       });
 
       // Cargar grupos
@@ -117,7 +114,7 @@ export class Dashboard implements OnInit {
             .sort((a, b) => new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime())
             .slice(0, 3);
         },
-        error: (error) => console.error('Error al cargar grupos:', error)
+        error: () => {}
       });
 
       // Cargar eventos
@@ -132,7 +129,7 @@ export class Dashboard implements OnInit {
             .sort((a, b) => new Date(a.fecha_evento).getTime() - new Date(b.fecha_evento).getTime())
             .slice(0, 4);
         },
-        error: (error: any) => console.error('Error al cargar eventos:', error)
+        error: () => {}
       });
 
       // Cargar eventos inscritos
@@ -140,7 +137,7 @@ export class Dashboard implements OnInit {
         next: (eventosInscritos) => {
           this.stats.eventosInscritos = eventosInscritos.length;
         },
-        error: (error: any) => console.error('Error al cargar eventos inscritos:', error)
+        error: () => {}
       });
 
       // Cargar emprendimientos
@@ -156,11 +153,11 @@ export class Dashboard implements OnInit {
             .sort((a, b) => new Date(b.fecha_evento).getTime() - new Date(a.fecha_evento).getTime())
             .slice(0, 3);
         },
-        error: (error: any) => console.error('Error al cargar emprendimientos:', error)
+        error: () => {}
       });
 
     } catch (error) {
-      console.error('Error general al cargar datos:', error);
+      // Error silencioso
     } finally {
       this.cargando = false;
     }

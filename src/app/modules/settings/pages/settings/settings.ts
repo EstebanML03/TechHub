@@ -149,6 +149,5 @@ export class SettingsComponent implements OnInit {
   // Método para resetear el popup (útil para desarrollo o testing)
   resetearPopupInfo(): void {
     localStorage.removeItem('settingsInfoMostrado');
-    console.log('✅ Popup de información reseteado. Se mostrará en la próxima visita.');
   }
 }
