@@ -505,6 +505,7 @@
   align-items: flex-start;
   margin-bottom: var(--spacing-md);
   gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .evento-header h3 {
@@ -512,6 +513,18 @@
   color: var(--text-primary);
   font-size: var(--font-size-xl);
   flex: 1;
+  min-width: 200px;
+}
+
+.badges {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.badge-categoria {
+  font-size: var(--font-size-sm);
 }
 
 .btn-like {

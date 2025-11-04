@@ -69,6 +69,16 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label>Categoría</label>
+          <select [(ngModel)]="nuevoEvento.id_categoria" name="categoria">
+            <option [value]="undefined">Sin categoría</option>
+            @for (categoria of categoriasDisponibles; track categoria.id_categoria) {
+              <option [value]="categoria.id_categoria">{{ categoria.nombre }}</option>
+            }
+          </select>
+        </div>
+
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">
             {{ editandoEvento ? 'Actualizar' : 'Crear' }} Evento
@@ -174,6 +184,19 @@
           <option value="finalizado">Finalizados</option>
         </select>
       </div>
+
+      <div class="form-group">
+        <label>
+          <lucide-icon name="tag"></lucide-icon>
+          Categoría
+        </label>
+        <select [(ngModel)]="categoriaFiltro">
+          <option value="">Todas las categorías</option>
+          @for (categoria of categoriasDisponibles; track categoria.id_categoria) {
+            <option [value]="categoria.id_categoria">{{ categoria.nombre }}</option>
+          }
+        </select>
+      </div>
     </div>
 
     <!-- Contador de resultados -->
@@ -228,14 +251,21 @@
             <div class="evento-contenido">
               <div class="evento-header">
                 <h3>{{ evento.nombre }}</h3>
-                @if (evento.modalidad) {
-                  <span
-                    class="badge"
-                    [style.background-color]="getModalidadBadge(evento.modalidad).color === 'primary' ? '#007bff' : getModalidadBadge(evento.modalidad).color === 'success' ? '#28a745' : '#6c757d'"
-                  >
-                    {{ getModalidadBadge(evento.modalidad).label }}
-                  </span>
-                }
+                <div class="badges">
+                  @if (evento.modalidad) {
+                    <span
+                      class="badge"
+                      [style.background-color]="getModalidadBadge(evento.modalidad).color === 'primary' ? '#007bff' : getModalidadBadge(evento.modalidad).color === 'success' ? '#28a745' : '#6c757d'"
+                    >
+                      {{ getModalidadBadge(evento.modalidad).label }}
+                    </span>
+                  }
+                  @if (evento.categoria) {
+                    <span class="badge badge-categoria" style="background-color: #6c63ff;">
+                      {{ evento.categoria.nombre }}
+                    </span>
+                  }
+                </div>
               </div>
 
               @if (eventoPasado(evento.fecha_evento)) {

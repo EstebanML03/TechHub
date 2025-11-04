@@ -22,11 +22,11 @@ export class EventosService {
    */
   async obtenerEventos(): Promise<EventoConRelaciones[]> {
     try {
-      console.log('📅 Obteniendo todos los eventos...');
+      console.log('Obteniendo todos los eventos...');
       
       // Primero intentar con parámetro select básico para evitar errores de relaciones
       const response = await apiClient.get('/eventos?select=*');
-      console.log('✅ Eventos obtenidos:', response.data);
+      console.log('Eventos obtenidos:', response.data);
       
       // La respuesta puede venir en response.data.data o directamente en response.data
       const eventos = response.data?.data || response.data || [];
@@ -41,14 +41,14 @@ export class EventosService {
         esta_inscrito: evento.esta_inscrito || false
       }));
     } catch (error: any) {
-      console.error('❌ Error al obtener eventos:', error);
-      console.error('❌ Error response:', error.response);
-      console.error('❌ Error data:', error.response?.data);
+      console.error('Error al obtener eventos:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
       
       // Mensaje más claro para el backend
       if (error.response?.data?.message?.includes('relationship')) {
-        console.error('🔴 ERROR DEL BACKEND: Faltan foreign keys en la base de datos.');
-        console.error('📄 Ver BACKEND_EVENTOS_API_SPEC.md para la solución SQL completa');
+        console.error(' ERROR DEL BACKEND: Faltan foreign keys en la base de datos.');
+        console.error('Ver BACKEND_EVENTOS_API_SPEC.md para la solución SQL completa');
       }
       
       throw error;
@@ -60,9 +60,9 @@ export class EventosService {
    */
   async obtenerEventoPorId(id: number): Promise<EventoConRelaciones> {
     try {
-      console.log(`📅 Obteniendo evento con ID: ${id}`);
+      console.log(`Obteniendo evento con ID: ${id}`);
       const response = await apiClient.get(`/eventos/${id}`);
-      console.log('✅ Evento obtenido:', response.data);
+      console.log('vento obtenido:', response.data);
       
       if (response.data && response.data.data) {
         return response.data.data;
@@ -70,7 +70,7 @@ export class EventosService {
       
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener evento ${id}:`, error);
+      console.error(`Error al obtener evento ${id}:`, error);
       throw error;
     }
   }
@@ -82,7 +82,7 @@ export class EventosService {
    */
   async obtenerMisEventos(): Promise<EventoConRelaciones[]> {
     try {
-      console.log('📅 Obteniendo mis eventos creados...');
+      console.log('Obteniendo mis eventos creados...');
       
       // Obtener todos los eventos
       const response = await apiClient.get('/eventos');
@@ -102,23 +102,23 @@ export class EventosService {
         userId = parseInt(localStorage.getItem('id') || '0');
       }
       
-      console.log('👤 Mi userId desde localStorage:', userId);
-      console.log('📦 LocalStorage completo:', {
+      console.log('Mi userId desde localStorage:', userId);
+      console.log('LocalStorage completo:', {
         userId: localStorage.getItem('userId'),
         id_usuario: localStorage.getItem('id_usuario'),
         user_id: localStorage.getItem('user_id'),
         id: localStorage.getItem('id'),
         token: localStorage.getItem('token') ? 'existe' : 'no existe'
       });
-      console.log('📊 Total de eventos:', todosEventos.length);
+      console.log('Total de eventos:', todosEventos.length);
       
       // Log completo del primer evento para ver todos sus campos
       if (todosEventos.length > 0) {
-        console.log('🔍 Primer evento completo:', todosEventos[0]);
-        console.log('🔍 Campos del primer evento:', Object.keys(todosEventos[0]));
+        console.log('Primer evento completo:', todosEventos[0]);
+        console.log('Campos del primer evento:', Object.keys(todosEventos[0]));
       }
       
-      console.log('🔍 Eventos con sus id_usuario:', todosEventos.map((e: any) => ({
+      console.log('Eventos con sus id_usuario:', todosEventos.map((e: any) => ({
         nombre: e.nombre,
         id_usuario: e.id_usuario,
         usuario_id: e.usuario_id,
@@ -136,7 +136,7 @@ export class EventosService {
         return match;
       });
       
-      console.log(`✅ Encontrados ${misEventos.length} eventos creados por mí`);
+      console.log(`Encontrados ${misEventos.length} eventos creados por mí`);
       
       // Mapear para asegurar que tengan las propiedades necesarias
       return misEventos.map((evento: any) => ({
@@ -148,9 +148,9 @@ export class EventosService {
         esta_inscrito: evento.esta_inscrito || false
       }));
     } catch (error: any) {
-      console.error('❌ Error al obtener mis eventos:', error);
-      console.error('❌ Error response:', error.response);
-      console.error('❌ Error data:', error.response?.data);
+      console.error('Error al obtener mis eventos:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
       throw error;
     }
   }

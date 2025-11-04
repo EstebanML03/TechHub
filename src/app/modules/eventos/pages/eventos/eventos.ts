@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { EventosService } from '../../services/eventos.service';
-import { EventoConRelaciones, CreateEventoRequest } from '../../models/evento.model';
+import { CategoriasService } from '../../services/categorias.service';
+import { EventoConRelaciones, CreateEventoRequest, Categoria } from '../../models/evento.model';
 import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
@@ -35,6 +36,7 @@ export class Eventos implements OnInit {
   // Datos
   eventos: EventoConRelaciones[] = [];
   eventosInscritos: EventoConRelaciones[] = [];
+  categoriasDisponibles: Categoria[] = [];
   cargando = false;
 
   // Vista activa
@@ -50,6 +52,7 @@ export class Eventos implements OnInit {
   modalidadFiltro = '';
   fechaFiltro = ''; // 'proximos', 'esta-semana', 'este-mes', 'pasados'
   estadoFiltro = ''; // 'disponible', 'finalizado'
+  categoriaFiltro = ''; // ID de categoría seleccionada para filtrar
   ordenamiento = 'fecha-asc'; // 'fecha-asc', 'fecha-desc', 'nombre-asc', 'inscritos-desc'
   filtrosExpandidos = false; // Controla el desplegable de filtros
 
@@ -68,11 +71,26 @@ export class Eventos implements OnInit {
 
   constructor(
     private eventosService: EventosService,
+    private categoriasService: CategoriasService,
     private alertService: AlertService
   ) {}
 
   async ngOnInit(): Promise<void> {
+    await this.cargarCategorias();
     await this.cargarEventos();
+  }
+
+  async cargarCategorias(): Promise<void> {
+    try {
+      this.categoriasDisponibles = await this.categoriasService.obtenerCategorias();
+      console.log('📂 Categorías disponibles:', this.categoriasDisponibles);
+    } catch (error: any) {
+      console.error('Error al cargar categorías:', error);
+      // No mostrar error si el endpoint no existe
+      if (error.response?.status !== 404 && error.response?.status !== 400) {
+        this.alertService.warning('Categorías no disponibles', 'No se pudieron cargar las categorías');
+      }
+    }
   }
 
   async cargarEventos(): Promise<void> {
@@ -179,6 +197,13 @@ export class Eventos implements OnInit {
       });
     }
 
+    // Filtro de categoría
+    if (this.categoriaFiltro) {
+      eventos = eventos.filter(e => 
+        e.id_categoria?.toString() === this.categoriaFiltro
+      );
+    }
+
     // Ordenamiento
     eventos = this.ordenarEventos([...eventos]);
 
@@ -242,6 +267,7 @@ export class Eventos implements OnInit {
     this.modalidadFiltro = '';
     this.fechaFiltro = '';
     this.estadoFiltro = '';
+    this.categoriaFiltro = '';
     this.ordenamiento = 'fecha-asc';
     this.paginaActual = 1;
     // Contraer filtros después de limpiar
@@ -290,7 +316,8 @@ export class Eventos implements OnInit {
       fecha_evento: evento.fecha_evento.toString().split('T')[0],
       hora_evento: evento.hora_evento,
       lugar: evento.lugar,
-      modalidad: evento.modalidad
+      modalidad: evento.modalidad,
+      id_categoria: evento.id_categoria
     };
     this.mostrarFormulario = true;
   }
@@ -378,6 +405,7 @@ export class Eventos implements OnInit {
     if (this.modalidadFiltro) count++;
     if (this.fechaFiltro) count++;
     if (this.estadoFiltro) count++;
+    if (this.categoriaFiltro) count++;
     return count;
   }
 
