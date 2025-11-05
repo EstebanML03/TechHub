@@ -6,7 +6,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/techhub/browser"
+        "distDir": "dist/ppi"
       }
     }
   ],
@@ -30,5 +30,5 @@
       "NODE_ENV": "production"
     }
   },
-  "outputDirectory": "dist/techhub/browser"
+  "outputDirectory": "dist/ppi"
 }
